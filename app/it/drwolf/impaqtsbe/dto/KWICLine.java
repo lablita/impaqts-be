@@ -1,7 +1,6 @@
 package it.drwolf.impaqtsbe.dto;
 
-import com.sketchengine.manatee.KWICLines;
-import it.drwolf.impaqtsbe.utils.ContextUtils;
+import java.util.Objects;
 
 public class KWICLine {
 	private String ref;
@@ -16,11 +15,18 @@ public class KWICLine {
 		this.rightContext = rightContext;
 	}
 
-	public KWICLine(KWICLines kwicLines) {
-		this.ref = kwicLines.get_refs();
-		this.leftContext = ContextUtils.strip_tags(kwicLines.get_left());
-		this.rightContext = ContextUtils.strip_tags(kwicLines.get_right());
-		this.kwic = ContextUtils.strip_tags(kwicLines.get_kwic());
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || this.getClass() != o.getClass()) {
+			return false;
+		}
+		KWICLine kwicLine = (KWICLine) o;
+		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext().equals(kwicLine.getLeftContext())
+				&& this.getKwic().equals(kwicLine.getKwic()) && this.getRightContext()
+				.equals(kwicLine.getRightContext());
 	}
 
 	public String getKwic() {
@@ -37,6 +43,11 @@ public class KWICLine {
 
 	public String getRightContext() {
 		return this.rightContext;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getRef(), this.getLeftContext(), this.getKwic(), this.getRightContext());
 	}
 
 	public void setKwic(String kwic) {

@@ -1,23 +1,33 @@
 package it.drwolf.impaqtsbe.controllers;
 
-import it.drwolf.impaqtsbe.dao.QueryDAO;
-import play.libs.Json;
+import akka.actor.ActorSystem;
+import akka.stream.Materializer;
+import it.drwolf.impaqtsbe.actors.ExternalProcessActor;
+import it.drwolf.impaqtsbe.startup.Startup;
+import play.libs.streams.ActorFlow;
 import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.WebSocket;
 
 import javax.inject.Inject;
 
 public class QueryController extends Controller {
 
-	private final QueryDAO queryDAO;
+	private final ActorSystem actorSystem;
+	private final Materializer materializer;
+	private final Startup startup;
 
 	@Inject
-	public QueryController(QueryDAO queryDAO) {
-		this.queryDAO = queryDAO;
+	public QueryController(ActorSystem actorSystem, Materializer materializer, Startup startup) {
+		this.actorSystem = actorSystem;
+		this.materializer = materializer;
+		this.startup = startup;
 	}
 
-	public Result testSingleWord(String word) throws InterruptedException {
-		return Results.ok(Json.toJson(this.queryDAO.testSingleWord(word)));
+	public WebSocket testSingleWordExt() throws InterruptedException {
+		return WebSocket.Json.accept(request -> ActorFlow.actorRef(
+				out -> ExternalProcessActor.props(out, this.startup.getManateeRegistryPath(),
+						this.startup.getManateeLibPath(), this.startup.getJavaExecutable(),
+						this.startup.getWrapperPath()), this.actorSystem, this.materializer));
 	}
+
 }

@@ -1,11 +1,13 @@
 package it.drwolf.impaqtsbe.startup;
 
-import com.typesafe.config.Config;
-import play.Logger;
+import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.File;
+
+import com.typesafe.config.Config;
+
+import play.Logger;
 
 @Singleton
 public class Startup {
@@ -14,15 +16,33 @@ public class Startup {
 	public static final String IMPAQTS_WRAPPER_JAR_PATH = "impaqts.wrapper.jar.path";
 	private static final String MANATEE_REGISTRY_PATH = "manatee.registry.path";
 	private static final String JAVA_EXECUTABLE_PATH = "java.executable.path";
+	private static final String DOCKER_JAVA_EXECUTABLE_PATH = "docker.executable.path";
+	private static final String DOCKER_SWITCH = "docker.switch";
+	private static final String DOCKER_EXECUTABLE_STATEMENT = "docker.executable.statement";
 	private final Logger.ALogger logger = Logger.of(Startup.class);
 	private String manateeRegistryPath;
 	private String manateeLibPath;
 	private String javaExecutable;
 	private String wrapperPath;
+	private String dockerJavaPath;
+	private String dockerSwitch;
+	private String dockerExecutableStatement;
 
 	@Inject
 	public Startup(Config configuration) {
 		this.init(configuration);
+	}
+
+	public String getDockerExecutableStatement() {
+		return this.dockerExecutableStatement;
+	}
+
+	public String getDockerJavaPath() {
+		return this.dockerJavaPath;
+	}
+
+	public String getDockerSwitch() {
+		return this.dockerSwitch;
 	}
 
 	public String getJavaExecutable() {
@@ -80,6 +100,19 @@ public class Startup {
 		File wrapper = new File(this.wrapperPath);
 		if (!wrapper.canRead()) {
 			this.logger.error("Cannot read Impaqts wrapper jar. Stopping server.");
+			System.exit(1);
+		}
+		this.dockerSwitch = configuration.getString(Startup.DOCKER_SWITCH);
+		this.dockerJavaPath = configuration.getString(Startup.DOCKER_JAVA_EXECUTABLE_PATH);
+		if (this.dockerSwitch != null && this.dockerSwitch.equals("yes")
+				&& (this.dockerJavaPath == null || this.dockerJavaPath.isEmpty())) {
+			this.logger.error("Java executable path not found. Stopping server.");
+			System.exit(1);
+		}
+		this.dockerExecutableStatement = configuration.getString(Startup.DOCKER_EXECUTABLE_STATEMENT);
+		if (this.dockerSwitch != null && this.dockerSwitch.equals("yes")
+				&& (this.dockerExecutableStatement == null || this.dockerExecutableStatement.isEmpty())) {
+			this.logger.error("Docker executable Statement not found. Stopping server.");
 			System.exit(1);
 		}
 	}

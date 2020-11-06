@@ -23,9 +23,9 @@ public class ExternalProcessActor extends AbstractActor {
 	private static final Logger logger = LoggerFactory.getLogger(ExternalProcessActor.class);
 
 	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath) {
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
 		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath);
+				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
 	}
 
 	private final ActorRef out;
@@ -33,22 +33,21 @@ public class ExternalProcessActor extends AbstractActor {
 	private final String manateeLibPath;
 	private final String javaExecutable;
 	private final String wrapperPath;
-	private final String dockerJavaPath;
 	private final String dockerSwitch;
-
-	private final String dockerExecutableStatement;
+	private final String dockerManateeRegistry;
+	private final String dockerManateePath;
 
 	@Inject
 	public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath, String dockerJavaPath, String dockerSwitch, String dockerExecutableStatement) {
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
 		this.out = out;
 		this.manateeRegistryPath = manateeRegistryPath;
 		this.manateeLibPath = manateeLibPath;
 		this.javaExecutable = javaExecutable;
 		this.wrapperPath = wrapperPath;
-		this.dockerJavaPath = dockerJavaPath;
 		this.dockerSwitch = dockerSwitch;
-		this.dockerExecutableStatement = dockerExecutableStatement;
+		this.dockerManateeRegistry = dockerManateeRegistry;
+		this.dockerManateePath = dockerManateePath;
 	}
 
 	@Override
@@ -69,8 +68,9 @@ public class ExternalProcessActor extends AbstractActor {
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList(this.dockerJavaPath, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
+			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
+					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
+					"-c", "susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
 		} else {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));

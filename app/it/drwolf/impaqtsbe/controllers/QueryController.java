@@ -1,5 +1,7 @@
 package it.drwolf.impaqtsbe.controllers;
 
+import javax.inject.Inject;
+
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 import it.drwolf.impaqtsbe.actors.ExternalProcessActor;
@@ -7,8 +9,6 @@ import it.drwolf.impaqtsbe.startup.Startup;
 import play.libs.streams.ActorFlow;
 import play.mvc.Controller;
 import play.mvc.WebSocket;
-
-import javax.inject.Inject;
 
 public class QueryController extends Controller {
 
@@ -27,7 +27,9 @@ public class QueryController extends Controller {
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(
 				out -> ExternalProcessActor.props(out, this.startup.getManateeRegistryPath(),
 						this.startup.getManateeLibPath(), this.startup.getJavaExecutable(),
-						this.startup.getWrapperPath()), this.actorSystem, this.materializer));
+						this.startup.getWrapperPath(), this.startup.getDockerSwitch(),
+						this.startup.getDockerManateeRegistry(), this.startup.getDockerManateePath()),
+				this.actorSystem, this.materializer));
 	}
 
 }

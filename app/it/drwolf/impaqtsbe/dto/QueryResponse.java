@@ -7,6 +7,7 @@ public class QueryResponse {
 	private Boolean inProgress = Boolean.TRUE;
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private Integer currentSize;
+	private List<String> metadataValues = new ArrayList<>();
 
 	public Integer getCurrentSize() {
 		return this.currentSize;
@@ -20,6 +21,10 @@ public class QueryResponse {
 		return this.kwicLines;
 	}
 
+	public List<String> getMetadataValues() {
+		return this.metadataValues;
+	}
+
 	public void setCurrentSize(Integer currentSize) {
 		this.currentSize = currentSize;
 	}
@@ -30,5 +35,9 @@ public class QueryResponse {
 
 	public void setKwicLines(List<KWICLine> kwicLines) {
 		this.kwicLines = kwicLines;
+	}
+
+	public void setMetadataValues(List<String> metadataValues) {
+		this.metadataValues = metadataValues;
 	}
 }

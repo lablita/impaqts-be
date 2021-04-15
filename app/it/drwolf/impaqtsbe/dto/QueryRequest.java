@@ -1,11 +1,13 @@
 package it.drwolf.impaqtsbe.dto;
 
 public class QueryRequest {
-	private final Integer start = 0;
-	private final Integer end = 0;
 	private String corpusMetadatum;
-	private String word;
+	private Integer start = 0;
+	private Integer end = 0;
 	private String corpus;
+	private String cql;
+	private boolean queryInCql = true;
+	private QueryPattern queryPattern;
 
 	public String getCorpus() {
 		return this.corpus;
@@ -23,8 +25,16 @@ public class QueryRequest {
 		return this.start;
 	}
 
-	public String getWord() {
-		return this.word;
+	public String getCql() {
+		return this.cql;
+	}
+
+	public boolean getQueryInCql() {
+		return queryInCql;
+	}
+
+	public QueryPattern getQueryPattern() {
+		return queryPattern;
 	}
 
 	public void setCorpus(String corpus) {
@@ -35,7 +45,23 @@ public class QueryRequest {
 		this.corpusMetadatum = corpusMetadatum;
 	}
 
-	public void setWord(String word) {
-		this.word = word;
+	public void setEnd(Integer end) {
+		this.end = end;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public void setCql(String cql) {
+		this.cql = cql;
+	}
+
+	public void setQueryInCql(boolean queryInCql) {
+		this.queryInCql = queryInCql;
+	}
+
+	public void setQueryPattern(QueryPattern queryPattern) {
+		this.queryPattern = queryPattern;
 	}
 }

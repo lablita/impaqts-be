@@ -1,5 +1,7 @@
 package it.drwolf.impaqtsbe.dto;
 
+import it.drwolf.impaqtsbe.query.QueryPattern;
+
 public class QueryRequest {
 	private String corpusMetadatum;
 	private Integer start = 0;

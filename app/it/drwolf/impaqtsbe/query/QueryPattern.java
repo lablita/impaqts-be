@@ -1,28 +1,34 @@
 package it.drwolf.impaqtsbe.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class QueryPattern {
 	// sono i blocchetti visuali
-	ArrayList<QueryToken> tokPattern;
+	private List<QueryToken> tokPattern = new ArrayList<>();
 
 	// filtro alto livello. Esempio: tipo di implicito
-	QueryStructure structPattern;
+	private QueryStructure structPattern = new QueryStructure();
 
 	public QueryPattern() {
 
 	}
 
+	@JsonIgnore
 	public String getCql() {
 		String cql = "";
 		if (this.tokPattern != null && !this.tokPattern.isEmpty()) {
 			// caso in cui ho esattamente 2 token e il secondo è un filtro con contesto
-			if (this.tokPattern.size() == 2 && this.tokPattern.get(1).getIsFilter() && this.tokPattern.get(0).getMinRepetitions() == 1
-					&& this.tokPattern.get(0).getMaxRepetitions() == 1 && this.tokPattern.get(1).getMinRepetitions() == 1
+			if (this.tokPattern.size() == 2 && this.tokPattern.get(1).getIsFilter()
+					&& this.tokPattern.get(0).getMinRepetitions() == 1
+					&& this.tokPattern.get(0).getMaxRepetitions() == 1
+					&& this.tokPattern.get(1).getMinRepetitions() == 1
 					&& this.tokPattern.get(1).getMaxRepetitions() == 1) {
 				cql = "(meet " + this.tokPattern.get(0).getCql() + " " + this.tokPattern.get(1).getCql();
-				cql += " -" + this.tokPattern.get(1).getFilterContextLeft() + " " + this.tokPattern.get(1).getFilterContextRight()
-						+ ")";
+				cql += " -" + this.tokPattern.get(1).getFilterContextLeft() + " " + this.tokPattern.get(1)
+						.getFilterContextRight() + ")";
 			}
 			// caso normale
 			else {
@@ -45,7 +51,7 @@ public class QueryPattern {
 		return this.structPattern;
 	}
 
-	public ArrayList<QueryToken> getTokPattern() {
+	public List<QueryToken> getTokPattern() {
 		return this.tokPattern;
 	}
 

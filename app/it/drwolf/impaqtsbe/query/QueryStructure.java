@@ -1,5 +1,7 @@
 package it.drwolf.impaqtsbe.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 public class QueryStructure extends QueryElement {
@@ -8,32 +10,33 @@ public class QueryStructure extends QueryElement {
 		super();
 	}
 
+	@Override
+	@JsonIgnore
 	public String getCql() {
-		return getCql(null);
+		return this.getCql(null);
 	}
 
+	@JsonIgnore
 	public String getCql(String cqlTokenPattern) {
 		String cql = cqlTokenPattern;
 		if (cql == null) {
 			cql = "";
 		}
-		if (!tags.isEmpty())
-		{
+		if (!this.getTags().isEmpty()) {
 			boolean first = true;
-			for (List<QueryTag> andList : tags) {
+			for (List<QueryTag> andList : this.getTags()) {
 				if (!first) {
 					cql += ")";
 				}
 				if (first && cqlTokenPattern == null) {
 					cql += " (";
-				}
-				else {
+				} else {
 					cql += " within (";
 				}
 				for (QueryTag orEl : andList) {
 					cql += "< " + orEl.getCql() + "/> | ";
 				}
-				cql = cql.substring(0,cql.length()-3) + ")";
+				cql = cql.substring(0, cql.length() - 3) + ")";
 				first = false;
 			}
 		}

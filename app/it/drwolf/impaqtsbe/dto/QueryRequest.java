@@ -8,7 +8,7 @@ public class QueryRequest {
 	private Integer end = 0;
 	private String corpus;
 	private String cql;
-	private boolean queryInCql = true;
+	private boolean queryInCql = false;
 	private QueryPattern queryPattern;
 
 	public String getCorpus() {
@@ -19,24 +19,28 @@ public class QueryRequest {
 		return this.corpusMetadatum;
 	}
 
+	public String getCql() {
+		return this.cql;
+	}
+
 	public Integer getEnd() {
 		return this.end;
+	}
+
+	public boolean getQueryInCql() {
+		return this.queryInCql;
+	}
+
+	public QueryPattern getQueryPattern() {
+		return this.queryPattern;
 	}
 
 	public Integer getStart() {
 		return this.start;
 	}
 
-	public String getCql() {
-		return this.cql;
-	}
-
-	public boolean getQueryInCql() {
-		return queryInCql;
-	}
-
-	public QueryPattern getQueryPattern() {
-		return queryPattern;
+	public boolean isQueryInCql() {
+		return this.queryInCql;
 	}
 
 	public void setCorpus(String corpus) {
@@ -47,16 +51,12 @@ public class QueryRequest {
 		this.corpusMetadatum = corpusMetadatum;
 	}
 
-	public void setEnd(Integer end) {
-		this.end = end;
-	}
-
-	public void setStart(Integer start) {
-		this.start = start;
-	}
-
 	public void setCql(String cql) {
 		this.cql = cql;
+	}
+
+	public void setEnd(Integer end) {
+		this.end = end;
 	}
 
 	public void setQueryInCql(boolean queryInCql) {
@@ -65,5 +65,9 @@ public class QueryRequest {
 
 	public void setQueryPattern(QueryPattern queryPattern) {
 		this.queryPattern = queryPattern;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
 	}
 }

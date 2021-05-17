@@ -1,13 +1,11 @@
 package it.drwolf.impaqtsbe.startup;
 
-import java.io.File;
+import com.typesafe.config.Config;
+import play.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import com.typesafe.config.Config;
-
-import play.Logger;
+import java.io.File;
 
 @Singleton
 public class Startup {
@@ -72,6 +70,16 @@ public class Startup {
 			this.logger.error("Manatee lib path is required. Stopping server.");
 			System.exit(1);
 		}
+		this.wrapperPath = configuration.getString(Startup.IMPAQTS_WRAPPER_JAR_PATH);
+		if (this.wrapperPath == null || this.wrapperPath.isEmpty()) {
+			this.logger.error("Impaqts wrapper jar path not found. Stopping server.");
+			System.exit(1);
+		}
+		this.javaExecutable = configuration.getString(Startup.JAVA_EXECUTABLE_PATH);
+		if (this.javaExecutable == null || this.javaExecutable.isEmpty()) {
+			this.logger.error("Java executable path not found. Stopping server.");
+			System.exit(1);
+		}
 		this.dockerSwitch = configuration.getString(Startup.DOCKER_SWITCH);
 		if (this.dockerSwitch == null || !this.dockerSwitch.equals("yes")) {
 			File manateeRegistryDir = new File(this.manateeRegistryPath);
@@ -94,28 +102,19 @@ public class Startup {
 				this.logger.error("Cannot execute java. Stopping server.");
 				System.exit(1);
 			}
-		}
-		this.javaExecutable = configuration.getString(Startup.JAVA_EXECUTABLE_PATH);
-		if (this.javaExecutable == null || this.javaExecutable.isEmpty()) {
-			this.logger.error("Java executable path not found. Stopping server.");
-			System.exit(1);
-		}
-		this.wrapperPath = configuration.getString(Startup.IMPAQTS_WRAPPER_JAR_PATH);
-		if (this.wrapperPath == null || this.wrapperPath.isEmpty()) {
-			this.logger.error("Impaqts wrapper jar path not found. Stopping server.");
-			System.exit(1);
-		}
-		this.dockerManateeRegistry = configuration.getString(Startup.DOCKER_MANATEE_REGISTRY);
-		if (this.dockerSwitch != null && this.dockerSwitch.equals("yes")
-				&& (this.dockerManateeRegistry == null || this.dockerManateeRegistry.isEmpty())) {
-			this.logger.error("Docker Manatee Registry not found. Stopping server.");
-			System.exit(1);
-		}
-		this.dockerManateePath = configuration.getString(Startup.DOCKER_MANATEE_PATH);
-		if (this.dockerSwitch != null && this.dockerSwitch.equals("yes")
-				&& (this.dockerManateePath == null || this.dockerManateePath.isEmpty())) {
-			this.logger.error("Docker Manatee Path not found. Stopping server.");
-			System.exit(1);
+		} else {
+			this.dockerManateeRegistry = configuration.getString(Startup.DOCKER_MANATEE_REGISTRY);
+			if (this.dockerSwitch != null && this.dockerSwitch.equals("yes") && (this.dockerManateeRegistry == null
+					|| this.dockerManateeRegistry.isEmpty())) {
+				this.logger.error("Docker Manatee Registry not found. Stopping server.");
+				System.exit(1);
+			}
+			this.dockerManateePath = configuration.getString(Startup.DOCKER_MANATEE_PATH);
+			if (this.dockerSwitch != null && this.dockerSwitch.equals("yes") && (this.dockerManateePath == null
+					|| this.dockerManateePath.isEmpty())) {
+				this.logger.error("Docker Manatee Path not found. Stopping server.");
+				System.exit(1);
+			}
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package it.drwolf.impaqtsbe.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class QueryTag {
 	// menu a tendina sopra il testo
 	String name; // nome del tag (es. pos, lemma, ...)
@@ -36,6 +38,7 @@ public class QueryTag {
 		return this.containsValue;
 	}
 
+	@JsonIgnore
 	public String getCql() {
 		String val = this.value;
 		if (this.containsValue) {

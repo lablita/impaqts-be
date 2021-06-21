@@ -1,16 +1,16 @@
 package it.drwolf.impaqtsbe.utils;
 
+import akka.actor.ActorRef;
+import com.fasterxml.jackson.databind.JsonNode;
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import play.Logger;
+import play.libs.Json;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-import akka.actor.ActorRef;
-import it.drwolf.impaqtsbe.dto.QueryRequest;
-import play.libs.Json;
 
 public class WrapperCaller {
 	private final ActorRef out;
@@ -43,6 +43,8 @@ public class WrapperCaller {
 					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
 					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		} else {
+			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
+			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
 		}

@@ -54,7 +54,7 @@ Thumbs.db
 
 ### Eclipse ###
 .metadata
-bin/
+bin/*
 tmp/
 *.tmp
 *.bak
@@ -279,7 +279,7 @@ server.pid
 .g8/
 sbtopts
 sbtconfig.txt
-!sbt/bin/
+!sbt/bin/*
 .project
 .classpath
 

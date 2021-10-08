@@ -1,33 +1,37 @@
 package it.drwolf.impaqtsbe.actors;
 
+import java.io.IOException;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import com.fasterxml.jackson.databind.JsonNode;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.libs.Json;
-
-import javax.inject.Inject;
-import java.io.IOException;
 
 public class ExternalProcessActor extends AbstractActor {
 	private static final Logger logger = LoggerFactory.getLogger(ExternalProcessActor.class);
+
+	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
+		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
+				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
+	}
 
 	private final WrapperCaller wrapperCaller;
 
 	@Inject
 	public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath) {
-		this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath);
-	}
-
-	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath) {
-		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath);
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
+		this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath,
+				dockerSwitch, dockerManateeRegistry, dockerManateePath);
 	}
 
 	@Override

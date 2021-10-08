@@ -277,3 +277,8 @@ server.pid
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,intellij,maven,playframework,java
 .g8/
+sbtopts
+sbtconfig.txt
+sbt
+.project
+.classpath

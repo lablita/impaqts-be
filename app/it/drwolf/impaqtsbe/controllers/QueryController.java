@@ -1,5 +1,9 @@
 package it.drwolf.impaqtsbe.controllers;
 
+import java.io.IOException;
+
+import javax.inject.Inject;
+
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 import it.drwolf.impaqtsbe.actors.ExternalProcessActor;
@@ -12,9 +16,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 import play.mvc.WebSocket;
-
-import javax.inject.Inject;
-import java.io.IOException;
 
 public class QueryController extends Controller {
 
@@ -29,7 +30,9 @@ public class QueryController extends Controller {
 		this.materializer = materializer;
 		this.startup = startup;
 		this.wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
-				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath());
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath());
 	}
 
 	public Result getMetadatumValues(String corpus, String metadatum) {
@@ -40,9 +43,8 @@ public class QueryController extends Controller {
 		try {
 			return Results.ok(this.wrapperCaller.retrieveMetadatumValues(queryRequest));
 		} catch (IOException e) {
-			return Results.internalServerError(
-					String.format("Error retrieving metadatum values for metadatum %s and corpus %s", metadatum,
-							corpus));
+			return Results.internalServerError(String
+					.format("Error retrieving metadatum values for metadatum %s and corpus %s", metadatum, corpus));
 		}
 	}
 
@@ -50,7 +52,9 @@ public class QueryController extends Controller {
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(
 				out -> ExternalProcessActor.props(out, this.startup.getManateeRegistryPath(),
 						this.startup.getManateeLibPath(), this.startup.getJavaExecutable(),
-						this.startup.getWrapperPath()), this.actorSystem, this.materializer));
+						this.startup.getWrapperPath(), this.startup.getDockerSwitch(),
+						this.startup.getDockerManateeRegistry(), this.startup.getDockerManateePath()),
+				this.actorSystem, this.materializer));
 	}
 
 }

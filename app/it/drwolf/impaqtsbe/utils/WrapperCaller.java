@@ -3,6 +3,7 @@ package it.drwolf.impaqtsbe.utils;
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
+import play.Logger;
 import play.libs.Json;
 
 import java.io.BufferedReader;
@@ -17,21 +18,36 @@ public class WrapperCaller {
 	private final String manateeLibPath;
 	private final String javaExecutable;
 	private final String wrapperPath;
+	private final String dockerSwitch;
+	private final String dockerManateeRegistry;
+	private final String dockerManateePath;
 
 	public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath) {
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
 		this.out = out;
 		this.manateeRegistryPath = manateeRegistryPath;
 		this.manateeLibPath = manateeLibPath;
 		this.javaExecutable = javaExecutable;
 		this.wrapperPath = wrapperPath;
+		this.dockerSwitch = dockerSwitch;
+		this.dockerManateeRegistry = dockerManateeRegistry;
+		this.dockerManateePath = dockerManateePath;
 	}
 
 	public void executeQuery(QueryRequest queryRequest) throws IOException {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
-		List<String> params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-				"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+		List<String> params;
+		if (this.dockerSwitch.equals("yes")) {
+			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
+					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
+					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+		} else {
+			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
+			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
+			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
+					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
+		}
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -49,8 +65,15 @@ public class WrapperCaller {
 	public JsonNode retrieveMetadatumValues(QueryRequest queryRequest) throws IOException {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
-		List<String> params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-				"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+		List<String> params;
+		if (this.dockerSwitch.equals("yes")) {
+			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
+					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
+					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+		} else {
+			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
+					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+		}
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {

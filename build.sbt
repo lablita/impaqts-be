@@ -1,7 +1,7 @@
 name := """impaqts-be"""
 organization := "it.drwolf"
 
-version := "1.0-SNAPSHOT"
+version := "dist"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 

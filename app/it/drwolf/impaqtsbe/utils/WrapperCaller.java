@@ -1,16 +1,18 @@
 package it.drwolf.impaqtsbe.utils;
 
-import akka.actor.ActorRef;
-import com.fasterxml.jackson.databind.JsonNode;
-import it.drwolf.impaqtsbe.dto.QueryRequest;
-import play.Logger;
-import play.libs.Json;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import akka.actor.ActorRef;
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import play.Logger;
+import play.libs.Json;
 
 public class WrapperCaller {
 	private final ActorRef out;
@@ -48,6 +50,8 @@ public class WrapperCaller {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
+		Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
+		Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -74,6 +78,7 @@ public class WrapperCaller {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
+		System.out.println("params: " + params.stream().collect(Collectors.joining(" || ")));
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {

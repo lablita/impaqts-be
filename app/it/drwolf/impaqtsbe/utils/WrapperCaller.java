@@ -41,17 +41,17 @@ public class WrapperCaller {
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
-					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					Json.stringify(Json.toJson(queryRequest)));
 		} else {
 			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
 			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
-		Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
-		Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
+		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -71,15 +71,16 @@ public class WrapperCaller {
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
-					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					Json.stringify(Json.toJson(queryRequest)));
 		} else {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
-		System.out.println("params: " + params.stream().collect(Collectors.joining(" || ")));
 		processBuilder.command(params);
+		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;

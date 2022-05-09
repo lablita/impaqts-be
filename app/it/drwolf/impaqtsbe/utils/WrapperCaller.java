@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import akka.actor.ActorRef;
@@ -45,6 +47,11 @@ public class WrapperCaller {
 					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
 					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
 					Json.stringify(Json.toJson(queryRequest)));
+			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
 			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
@@ -57,7 +64,7 @@ public class WrapperCaller {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###")) {
+				if (line.startsWith("###") || line.startsWith("json")) {
 					// skip comments line
 					continue;
 				}
@@ -75,6 +82,11 @@ public class WrapperCaller {
 					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
 					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
 					Json.stringify(Json.toJson(queryRequest)));
+			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
@@ -85,7 +97,7 @@ public class WrapperCaller {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###")) {
+				if (line.startsWith("###") || line.startsWith("json")) {
 					// skip comments line
 					continue;
 				}

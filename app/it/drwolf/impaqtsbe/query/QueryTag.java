@@ -14,6 +14,7 @@ public class QueryTag {
 	boolean containsValue = false; // il tag deve contenere value
 	boolean matchCase = true; // il valore non ignora maiuscole/minuscole
 	boolean negation = false; // il token è != e non =
+	String defaultAttributeCQL;
 
 	public QueryTag() {
 
@@ -38,8 +39,7 @@ public class QueryTag {
 		return this.containsValue;
 	}
 
-	@JsonIgnore
-	public String getCql() {
+	@JsonIgnore public String getCql() {
 		String val = this.value;
 		if (this.containsValue) {
 			val = ".*" + val + ".*";
@@ -59,6 +59,10 @@ public class QueryTag {
 			return this.structure + " " + this.name + op + "\"" + val + "\"";
 		}
 		return this.name + op + "\"" + val + "\"";
+	}
+
+	public String getDefaultAttributeCQL() {
+		return this.defaultAttributeCQL;
 	}
 
 	public boolean getEndsWithValue() {
@@ -91,6 +95,10 @@ public class QueryTag {
 
 	public void setContainsValue(boolean x) {
 		this.containsValue = x;
+	}
+
+	public void setDefaultAttributeCQL(String defaultAttributeCQL) {
+		this.defaultAttributeCQL = defaultAttributeCQL;
 	}
 
 	public void setEndsWithValue(boolean x) {

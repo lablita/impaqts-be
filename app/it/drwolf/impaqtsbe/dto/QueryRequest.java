@@ -1,7 +1,5 @@
 package it.drwolf.impaqtsbe.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import it.drwolf.impaqtsbe.query.QueryPattern;
 
 public class QueryRequest {
@@ -15,7 +13,7 @@ public class QueryRequest {
 	private CollocationQueryRequest collocationQueryRequest;
 	private SortQueryRequest sortQueryRequest;
 
-	@JsonIgnore public CollocationQueryRequest getCollocationQueryRequest() {
+	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
 	}
 
@@ -43,7 +41,7 @@ public class QueryRequest {
 		return this.queryPattern;
 	}
 
-	@JsonIgnore public SortQueryRequest getSortQueryRequest() {
+	public SortQueryRequest getSortQueryRequest() {
 		return this.sortQueryRequest;
 	}
 

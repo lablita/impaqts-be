@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CollocationQueryRequest {
 	private String attribute;
-	private Integer rengeFrom;
+	private Integer rangeFrom;
 	private Integer rangeTo;
 	private Integer minFreqCorpus;
 	private Integer minFreqRange;
@@ -23,12 +23,12 @@ public class CollocationQueryRequest {
 		return this.minFreqRange;
 	}
 
-	public Integer getRangeTo() {
-		return this.rangeTo;
+	public Integer getRangeFrom() {
+		return this.rangeFrom;
 	}
 
-	public Integer getRengeFrom() {
-		return this.rengeFrom;
+	public Integer getRangeTo() {
+		return this.rangeTo;
 	}
 
 	public List<String> getShowFunc() {
@@ -51,12 +51,12 @@ public class CollocationQueryRequest {
 		this.minFreqRange = minFreqRange;
 	}
 
-	public void setRangeTo(Integer rangeTo) {
-		this.rangeTo = rangeTo;
+	public void setRangeFrom(Integer rangeFrom) {
+		this.rangeFrom = rangeFrom;
 	}
 
-	public void setRengeFrom(Integer rengeFrom) {
-		this.rengeFrom = rengeFrom;
+	public void setRangeTo(Integer rangeTo) {
+		this.rangeTo = rangeTo;
 	}
 
 	public void setShowFunc(List<String> showFunc) {

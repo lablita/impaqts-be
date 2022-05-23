@@ -64,7 +64,7 @@ public class WrapperCaller {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###") || line.startsWith("json")) {
+				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;
 				}

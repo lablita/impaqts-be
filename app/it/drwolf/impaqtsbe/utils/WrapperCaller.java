@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import akka.actor.ActorRef;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
@@ -17,6 +20,7 @@ import play.Logger;
 import play.libs.Json;
 
 public class WrapperCaller {
+	private static final int MAX_ITEMS = 50000;
 	private final ActorRef out;
 	private final String manateeRegistryPath;
 	private final String manateeLibPath;
@@ -39,6 +43,12 @@ public class WrapperCaller {
 	}
 
 	public void executeQuery(QueryRequest queryRequest) throws IOException {
+		int start = queryRequest.getStart();
+		int end = queryRequest.getEnd();
+		if (queryRequest.getCollocationQueryRequest() != null) {
+			queryRequest.setStart(0);
+			queryRequest.setEnd(WrapperCaller.MAX_ITEMS);
+		}
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
@@ -68,7 +78,20 @@ public class WrapperCaller {
 					// skip comments line
 					continue;
 				}
-				this.out.tell(Json.parse(line), null);
+				if (queryRequest.getCollocationQueryRequest() != null) {
+					//pagination collocations
+					ObjectMapper mapper = new ObjectMapper();
+					ArrayNode newArrayNode = mapper.createArrayNode();
+					JsonNode lineJson = Json.parse(line);
+					ArrayNode arrayNode = (ArrayNode) lineJson.get("collocations");
+					for (int index = start; index < end; index++) {
+						newArrayNode.add(arrayNode.get(index));
+					}
+					((ObjectNode) lineJson).replace("collocations", newArrayNode);
+					this.out.tell(lineJson, null);
+				} else {
+					this.out.tell(Json.parse(line), null);
+				}
 			}
 		}
 	}
@@ -106,4 +129,5 @@ public class WrapperCaller {
 		}
 		return Json.toJson(null);
 	}
+
 }

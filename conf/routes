@@ -10,5 +10,6 @@ GET     /assets/*file                           controllers.Assets.versioned(pat
 
 GET     /test-query-ws-ext                      it.drwolf.impaqtsbe.controllers.QueryController.testSingleWordExt()
 
++ nocsrf
 GET     /metadatum-values/:corpus/:metadatum    it.drwolf.impaqtsbe.controllers.QueryController.getMetadatumValues(corpus: String, metadatum: String)
 

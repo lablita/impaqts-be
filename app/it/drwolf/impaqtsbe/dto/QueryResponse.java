@@ -8,6 +8,11 @@ public class QueryResponse {
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private Integer currentSize;
 	private List<String> metadataValues = new ArrayList<>();
+	private List<CollocationItem> collocations = new ArrayList<>();
+
+	public List<CollocationItem> getCollocations() {
+		return this.collocations;
+	}
 
 	public Integer getCurrentSize() {
 		return this.currentSize;
@@ -23,6 +28,10 @@ public class QueryResponse {
 
 	public List<String> getMetadataValues() {
 		return this.metadataValues;
+	}
+
+	public void setCollocations(List<CollocationItem> collocations) {
+		this.collocations = collocations;
 	}
 
 	public void setCurrentSize(Integer currentSize) {

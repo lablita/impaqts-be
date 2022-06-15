@@ -10,6 +10,12 @@ public class QueryRequest {
 	private String cql;
 	private boolean queryInCql = false;
 	private QueryPattern queryPattern;
+	private CollocationQueryRequest collocationQueryRequest;
+	private SortQueryRequest sortQueryRequest;
+
+	public CollocationQueryRequest getCollocationQueryRequest() {
+		return this.collocationQueryRequest;
+	}
 
 	public String getCorpus() {
 		return this.corpus;
@@ -35,12 +41,20 @@ public class QueryRequest {
 		return this.queryPattern;
 	}
 
+	public SortQueryRequest getSortQueryRequest() {
+		return this.sortQueryRequest;
+	}
+
 	public Integer getStart() {
 		return this.start;
 	}
 
 	public boolean isQueryInCql() {
 		return this.queryInCql;
+	}
+
+	public void setCollocationQueryRequest(CollocationQueryRequest collocationQueryRequest) {
+		this.collocationQueryRequest = collocationQueryRequest;
 	}
 
 	public void setCorpus(String corpus) {
@@ -65,6 +79,10 @@ public class QueryRequest {
 
 	public void setQueryPattern(QueryPattern queryPattern) {
 		this.queryPattern = queryPattern;
+	}
+
+	public void setSortQueryRequest(SortQueryRequest sortQueryRequest) {
+		this.sortQueryRequest = sortQueryRequest;
 	}
 
 	public void setStart(Integer start) {

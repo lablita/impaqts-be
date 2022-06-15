@@ -1,18 +1,26 @@
 package it.drwolf.impaqtsbe.utils;
 
-import akka.actor.ActorRef;
-import com.fasterxml.jackson.databind.JsonNode;
-import it.drwolf.impaqtsbe.dto.QueryRequest;
-import play.Logger;
-import play.libs.Json;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import akka.actor.ActorRef;
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import play.Logger;
+import play.libs.Json;
 
 public class WrapperCaller {
+	private static final int MAX_ITEMS = 50000;
 	private final ActorRef out;
 	private final String manateeRegistryPath;
 	private final String manateeLibPath;
@@ -35,29 +43,55 @@ public class WrapperCaller {
 	}
 
 	public void executeQuery(QueryRequest queryRequest) throws IOException {
+		int start = queryRequest.getStart();
+		int end = queryRequest.getEnd();
+		if (queryRequest.getCollocationQueryRequest() != null) {
+			queryRequest.setStart(0);
+			queryRequest.setEnd(WrapperCaller.MAX_ITEMS);
+		}
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
-					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					Json.stringify(Json.toJson(queryRequest)));
+			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
 			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
+		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###")) {
+				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;
 				}
-				this.out.tell(Json.parse(line), null);
+				if (queryRequest.getCollocationQueryRequest() != null) {
+					//pagination collocations
+					ObjectMapper mapper = new ObjectMapper();
+					ArrayNode newArrayNode = mapper.createArrayNode();
+					JsonNode lineJson = Json.parse(line);
+					ArrayNode arrayNode = (ArrayNode) lineJson.get("collocations");
+					for (int index = start; index < end; index++) {
+						newArrayNode.add(arrayNode.get(index));
+					}
+					((ObjectNode) lineJson).replace("collocations", newArrayNode);
+					this.out.tell(lineJson, null);
+				} else {
+					this.out.tell(Json.parse(line), null);
+				}
 			}
 		}
 	}
@@ -67,19 +101,26 @@ public class WrapperCaller {
 		processBuilder.environment().put("MANATEE_REGISTRY", this.manateeRegistryPath);
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList("docker", "run", "-e", this.dockerManateeRegistry, "-v", this.dockerManateePath,
-					"--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath, "-l", this.manateeLibPath,
-					"-c", queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					Json.stringify(Json.toJson(queryRequest)));
+			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
 		processBuilder.command(params);
+		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###")) {
+				if (line.startsWith("###") || line.startsWith("json")) {
 					// skip comments line
 					continue;
 				}
@@ -88,4 +129,5 @@ public class WrapperCaller {
 		}
 		return Json.toJson(null);
 	}
+
 }

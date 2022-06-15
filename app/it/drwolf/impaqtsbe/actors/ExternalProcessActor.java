@@ -18,6 +18,14 @@ import play.libs.Json;
 
 public class ExternalProcessActor extends AbstractActor {
 	private static final Logger logger = LoggerFactory.getLogger(ExternalProcessActor.class);
+	private final WrapperCaller wrapperCaller;
+
+	@Inject public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath,
+			String javaExecutable, String wrapperPath, String dockerSwitch, String dockerManateeRegistry,
+			String dockerManateePath) {
+		this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath,
+				dockerSwitch, dockerManateeRegistry, dockerManateePath);
+	}
 
 	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
 			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
@@ -25,17 +33,7 @@ public class ExternalProcessActor extends AbstractActor {
 				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
 	}
 
-	private final WrapperCaller wrapperCaller;
-
-	@Inject
-	public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
-		this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath,
-				dockerSwitch, dockerManateeRegistry, dockerManateePath);
-	}
-
-	@Override
-	public AbstractActor.Receive createReceive() {
+	@Override public AbstractActor.Receive createReceive() {
 		return this.receiveBuilder().match(JsonNode.class, message -> this.manageQueryRequest(message)).build();
 	}
 

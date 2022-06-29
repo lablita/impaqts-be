@@ -13,6 +13,8 @@ public class QueryRequest {
 	private CollocationQueryRequest collocationQueryRequest;
 	private SortQueryRequest sortQueryRequest;
 
+	private FrequencyQueryRequest frequencyQueryRequest;
+
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
 	}
@@ -31,6 +33,10 @@ public class QueryRequest {
 
 	public Integer getEnd() {
 		return this.end;
+	}
+
+	public FrequencyQueryRequest getFrequencyQueryRequest() {
+		return this.frequencyQueryRequest;
 	}
 
 	public boolean getQueryInCql() {
@@ -71,6 +77,10 @@ public class QueryRequest {
 
 	public void setEnd(Integer end) {
 		this.end = end;
+	}
+
+	public void setFrequencyQueryRequest(FrequencyQueryRequest frequencyQueryRequest) {
+		this.frequencyQueryRequest = frequencyQueryRequest;
 	}
 
 	public void setQueryInCql(boolean queryInCql) {

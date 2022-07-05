@@ -72,6 +72,7 @@ public class WrapperCaller {
 		processBuilder.command(params);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			ObjectMapper mapper = new ObjectMapper();
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
@@ -80,7 +81,6 @@ public class WrapperCaller {
 				}
 				if (queryRequest.getCollocationQueryRequest() != null) {
 					//pagination collocations
-					ObjectMapper mapper = new ObjectMapper();
 					ArrayNode newArrayNode = mapper.createArrayNode();
 					JsonNode lineJson = Json.parse(line);
 					ArrayNode arrayNode = (ArrayNode) lineJson.get("collocations");
@@ -93,6 +93,7 @@ public class WrapperCaller {
 					this.out.tell(Json.parse(line), null);
 				}
 			}
+			// this.out.tell(mapper.createObjectNode(), null);
 		}
 	}
 

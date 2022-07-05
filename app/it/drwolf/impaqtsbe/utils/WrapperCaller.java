@@ -63,10 +63,10 @@ public class WrapperCaller {
 					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
 			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
-			Logger.debug("Query: " + Json.stringify(Json.toJson(queryRequest)));
+			Logger.debug("Query: " + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
 			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					"susanne", "-j", Json.stringify(Json.toJson(queryRequest)));
+					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
 		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);

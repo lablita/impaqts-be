@@ -9,6 +9,7 @@ public class QueryResponse {
 	private Integer currentSize;
 	private List<String> metadataValues = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
+	private List<FrequencyItem> frequencies = new ArrayList<>();
 
 	public List<CollocationItem> getCollocations() {
 		return this.collocations;
@@ -16,6 +17,10 @@ public class QueryResponse {
 
 	public Integer getCurrentSize() {
 		return this.currentSize;
+	}
+
+	public List<FrequencyItem> getFrequencies() {
+		return this.frequencies;
 	}
 
 	public Boolean getInProgress() {
@@ -36,6 +41,10 @@ public class QueryResponse {
 
 	public void setCurrentSize(Integer currentSize) {
 		this.currentSize = currentSize;
+	}
+
+	public void setFrequencies(List<FrequencyItem> frequencies) {
+		this.frequencies = frequencies;
 	}
 
 	public void setInProgress(Boolean inProgress) {

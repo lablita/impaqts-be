@@ -75,6 +75,7 @@ public class WrapperCaller {
 			ObjectMapper mapper = new ObjectMapper();
 			String line;
 			while ((line = reader.readLine()) != null) {
+				Logger.debug("Result line: " + line);
 				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;

@@ -5,14 +5,19 @@ import java.util.List;
 
 public class FrequencyQueryRequest {
 	private Integer frequencyLimit;
-	private Boolean includeCategories;
+	private Boolean includeCategoriesWithNoHits;
 	private String frequencyColSort;
 	private String frequencyTypeSort;
 	private List<String> categories = new ArrayList<>();
+	private String category;
 	private List<FrequencyOption> multilevelFrequency = new ArrayList<>();
 
 	public List<String> getCategories() {
 		return this.categories;
+	}
+
+	public String getCategory() {
+		return this.category;
 	}
 
 	public String getFrequencyColSort() {
@@ -27,8 +32,8 @@ public class FrequencyQueryRequest {
 		return this.frequencyTypeSort;
 	}
 
-	public Boolean getIncludeCategories() {
-		return this.includeCategories;
+	public Boolean getIncludeCategoriesWithNoHits() {
+		return this.includeCategoriesWithNoHits;
 	}
 
 	public List<FrequencyOption> getMultilevelFrequency() {
@@ -37,6 +42,10 @@ public class FrequencyQueryRequest {
 
 	public void setCategories(List<String> categories) {
 		this.categories = categories;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public void setFrequencyColSort(String frequencyColSort) {
@@ -51,8 +60,8 @@ public class FrequencyQueryRequest {
 		this.frequencyTypeSort = frequencyTypeSort;
 	}
 
-	public void setIncludeCategories(Boolean includeCategories) {
-		this.includeCategories = includeCategories;
+	public void setIncludeCategoriesWithNoHits(Boolean includeCategoriesWithNoHits) {
+		this.includeCategoriesWithNoHits = includeCategoriesWithNoHits;
 	}
 
 	public void setMultilevelFrequency(List<FrequencyOption> multilevelFrequency) {

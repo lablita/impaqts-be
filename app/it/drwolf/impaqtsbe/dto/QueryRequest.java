@@ -12,11 +12,15 @@ public class QueryRequest {
 	private QueryPattern queryPattern;
 	private CollocationQueryRequest collocationQueryRequest;
 	private SortQueryRequest sortQueryRequest;
-
+	private ContextConcordanceQueryRequest contextConcordanceQueryRequest;
 	private FrequencyQueryRequest frequencyQueryRequest;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
+	}
+
+	public ContextConcordanceQueryRequest getContextConcordanceQueryRequest() {
+		return this.contextConcordanceQueryRequest;
 	}
 
 	public String getCorpus() {
@@ -61,6 +65,10 @@ public class QueryRequest {
 
 	public void setCollocationQueryRequest(CollocationQueryRequest collocationQueryRequest) {
 		this.collocationQueryRequest = collocationQueryRequest;
+	}
+
+	public void setContextConcordanceQueryRequest(ContextConcordanceQueryRequest contextConcordanceQueryRequest) {
+		this.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
 	}
 
 	public void setCorpus(String corpus) {

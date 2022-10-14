@@ -8,13 +8,8 @@ public class FrequencyQueryRequest {
 	private Boolean includeCategoriesWithNoHits;
 	private String frequencyColSort;
 	private String frequencyTypeSort;
-	private List<String> categories = new ArrayList<>();
 	private String category;
 	private List<FrequencyOption> multilevelFrequency = new ArrayList<>();
-
-	public List<String> getCategories() {
-		return this.categories;
-	}
 
 	public String getCategory() {
 		return this.category;
@@ -38,10 +33,6 @@ public class FrequencyQueryRequest {
 
 	public List<FrequencyOption> getMultilevelFrequency() {
 		return this.multilevelFrequency;
-	}
-
-	public void setCategories(List<String> categories) {
-		this.categories = categories;
 	}
 
 	public void setCategory(String category) {

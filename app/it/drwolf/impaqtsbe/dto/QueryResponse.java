@@ -1,17 +1,12 @@
 package it.drwolf.impaqtsbe.dto;
 
-import it.drwolf.impaqtsbe.dto.CollocationItem;
-import it.drwolf.impaqtsbe.dto.DescResponse;
-import it.drwolf.impaqtsbe.dto.FrequencyItem;
-import it.drwolf.impaqtsbe.dto.KWICLine;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse {
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
-	private List<FrequencyItem> frequencies = new ArrayList<>();
+	private FrequencyItem frequency = new FrequencyItem();
 	private List<DescResponse> descResponses = new ArrayList<>();
 	private Boolean inProgress = Boolean.TRUE;
 	private Integer currentSize;
@@ -27,10 +22,6 @@ public class QueryResponse {
 
 	public List<DescResponse> getDescResponses() {
 		return this.descResponses;
-	}
-
-	public List<FrequencyItem> getFrequencies() {
-		return this.frequencies;
 	}
 
 	public Boolean getInProgress() {
@@ -53,10 +44,6 @@ public class QueryResponse {
 		this.currentSize = currentSize;
 	}
 
-	public void setFrequencies(List<FrequencyItem> frequencies) {
-		this.frequencies = frequencies;
-	}
-
 	public void setInProgress(Boolean inProgress) {
 		this.inProgress = inProgress;
 	}
@@ -68,4 +55,13 @@ public class QueryResponse {
 	public void setMetadataValues(List<String> metadataValues) {
 		this.metadataValues = metadataValues;
 	}
+
+	public FrequencyItem getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(FrequencyItem frequency) {
+		this.frequency = frequency;
+	}
+
 }

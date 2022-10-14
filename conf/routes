@@ -13,3 +13,7 @@ GET     /test-query-ws-ext                      it.drwolf.impaqtsbe.controllers.
 + nocsrf
 GET     /metadatum-values/:corpus/:metadatum    it.drwolf.impaqtsbe.controllers.QueryController.getMetadatumValues(corpus: String, metadatum: String)
 
+POST    /corpus/upload                          it.drwolf.impaqtsbe.controllers.CorpusController.uploadCorpus(request: Request)
+DELETE  /corpus                                 it.drwolf.impaqtsbe.controllers.CorpusController.deleteCorpus(corpusName: String)
+POST    /registry/upload                        it.drwolf.impaqtsbe.controllers.CorpusController.uploadRegistry(request: Request)
+DELETE  /registry                               it.drwolf.impaqtsbe.controllers.CorpusController.deleteRegistry(registryName: String)

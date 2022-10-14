@@ -17,6 +17,7 @@ public class Startup {
 	private static final String DOCKER_SWITCH = "docker.switch";
 	private static final String DOCKER_MANATEE_REGISTRY = "docker.manatee.registry";
 	private static final String DOCKER_MANATEE_PATH = "docker.manatee.path";
+	private static final String CORPORA_FOLDER_PATH = "corpora.folder.path";
 	private final Logger.ALogger logger = Logger.of(Startup.class);
 	private String manateeRegistryPath;
 	private String manateeLibPath;
@@ -26,9 +27,15 @@ public class Startup {
 	private String dockerManateeRegistry;
 	private String dockerManateePath;
 
+	private String corporaFolderPath;
+
 	@Inject
 	public Startup(Config configuration) {
 		this.init(configuration);
+	}
+
+	public String getCorporaFolderPath() {
+		return corporaFolderPath;
 	}
 
 	public String getDockerManateePath() {
@@ -77,6 +84,11 @@ public class Startup {
 		}
 		this.javaExecutable = configuration.getString(Startup.JAVA_EXECUTABLE_PATH);
 		if (this.javaExecutable == null || this.javaExecutable.isEmpty()) {
+			this.logger.error("Java executable path not found. Stopping server.");
+			System.exit(1);
+		}
+		this.corporaFolderPath = configuration.getString((Startup.CORPORA_FOLDER_PATH));
+		if (this.corporaFolderPath == null || this.corporaFolderPath.isEmpty()) {
 			this.logger.error("Java executable path not found. Stopping server.");
 			System.exit(1);
 		}

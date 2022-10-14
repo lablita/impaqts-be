@@ -4,40 +4,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FrequencyItem {
-	private String head;
-	private int total;
-	private long totalFreq;
-	private List<FrequencyResultLine> items = new ArrayList<>();
+    private String head;
+    private int total;
+    private long totalFreq;
+    private long maxFreq;
+    private float maxRel;
+    private List<FrequencyResultLine> items = new ArrayList<>();
 
-	public String getHead() {
-		return this.head;
-	}
+    public float getMaxRel() {
+        return this.maxRel;
+    }
 
-	public List<FrequencyResultLine> getItems() {
-		return this.items;
-	}
+    public void setMaxRel(float maxRel) {
+        this.maxRel = maxRel;
+    }
 
-	public int getTotal() {
-		return this.total;
-	}
+    public long getMaxFreq() {
+        return this.maxFreq;
+    }
 
-	public long getTotalFreq() {
-		return this.totalFreq;
-	}
+    public void setMaxFreq(long maxFreq) {
+        this.maxFreq = maxFreq;
+    }
 
-	public void setHead(String head) {
-		this.head = head;
-	}
+    public String getHead() {
+        return this.head;
+    }
 
-	public void setItems(List<FrequencyResultLine> items) {
-		this.items = items;
-	}
+    public void setHead(String head) {
+        this.head = head;
+    }
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    public List<FrequencyResultLine> getItems() {
+        return this.items;
+    }
 
-	public void setTotalFreq(long totalFreq) {
-		this.totalFreq = totalFreq;
-	}
+    public void setItems(List<FrequencyResultLine> items) {
+        this.items = items;
+    }
+
+    public int getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public long getTotalFreq() {
+        return this.totalFreq;
+    }
+
+    public void setTotalFreq(long totalFreq) {
+        this.totalFreq = totalFreq;
+    }
 }

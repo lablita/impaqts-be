@@ -1,23 +1,22 @@
 package it.drwolf.impaqtsbe.utils;
 
+import akka.actor.ActorRef;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import play.libs.Json;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import akka.actor.ActorRef;
-import it.drwolf.impaqtsbe.dto.QueryRequest;
-import play.Logger;
-import play.libs.Json;
 
 public class WrapperCaller {
 	private static final int MAX_ITEMS = 50000;
@@ -29,6 +28,8 @@ public class WrapperCaller {
 	private final String dockerSwitch;
 	private final String dockerManateeRegistry;
 	private final String dockerManateePath;
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
 			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
@@ -63,19 +64,20 @@ public class WrapperCaller {
 					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
 			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
-			Logger.debug("Query: " + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
-			Logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
+			this.logger.debug("Query: " + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
+			this.logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
 		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);
+		processBuilder.redirectErrorStream(false);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			ObjectMapper mapper = new ObjectMapper();
 			String line;
 			while ((line = reader.readLine()) != null) {
-				Logger.debug("Result line: " + line);
+				this.logger.debug("Result line: " + line);
 				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;
@@ -91,7 +93,11 @@ public class WrapperCaller {
 					((ObjectNode) lineJson).replace("collocations", newArrayNode);
 					this.out.tell(lineJson, null);
 				} else {
-					this.out.tell(Json.parse(line), null);
+					try {
+						this.out.tell(Json.parse(line), null);
+					} catch (RuntimeException re) {
+						this.logger.error(String.format("Parse error line %s", line));
+					}
 				}
 			}
 			// this.out.tell(mapper.createObjectNode(), null);

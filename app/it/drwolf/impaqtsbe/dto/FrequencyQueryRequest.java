@@ -6,7 +6,8 @@ import java.util.List;
 public class FrequencyQueryRequest {
 	private Integer frequencyLimit;
 	private Boolean includeCategoriesWithNoHits;
-	private String frequencyColSort;
+	private String frequencyType;
+	private Integer frequencyColSort;
 	private String frequencyTypeSort;
 	private String category;
 	private List<FrequencyOption> multilevelFrequency = new ArrayList<>();
@@ -15,12 +16,16 @@ public class FrequencyQueryRequest {
 		return this.category;
 	}
 
-	public String getFrequencyColSort() {
+	public Integer getFrequencyColSort() {
 		return this.frequencyColSort;
 	}
 
 	public Integer getFrequencyLimit() {
 		return this.frequencyLimit;
+	}
+
+	public String getFrequencyType() {
+		return frequencyType;
 	}
 
 	public String getFrequencyTypeSort() {
@@ -39,12 +44,16 @@ public class FrequencyQueryRequest {
 		this.category = category;
 	}
 
-	public void setFrequencyColSort(String frequencyColSort) {
+	public void setFrequencyColSort(Integer frequencyColSort) {
 		this.frequencyColSort = frequencyColSort;
 	}
 
 	public void setFrequencyLimit(Integer frequencyLimit) {
 		this.frequencyLimit = frequencyLimit;
+	}
+
+	public void setFrequencyType(String frequencyType) {
+		this.frequencyType = frequencyType;
 	}
 
 	public void setFrequencyTypeSort(String frequencyTypeSort) {

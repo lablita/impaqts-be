@@ -1,14 +1,15 @@
 package it.drwolf.impaqtsbe.dto;
 
+import java.util.List;
 import java.util.Objects;
 
 public class KWICLine {
 	private String ref;
-	private String leftContext;
+	private List<String> leftContext;
 	private String kwic;
-	private String rightContext;
+	private List<String> rightContext;
 
-	public KWICLine(String ref, String leftContext, String kwic, String rightContext) {
+	public KWICLine(String ref, List<String> leftContext, String kwic, List<String> rightContext) {
 		this.ref = ref;
 		this.leftContext = leftContext;
 		this.kwic = kwic;
@@ -24,16 +25,16 @@ public class KWICLine {
 			return false;
 		}
 		KWICLine kwicLine = (KWICLine) o;
-		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext().equals(kwicLine.getLeftContext())
-				&& this.getKwic().equals(kwicLine.getKwic()) && this.getRightContext()
-				.equals(kwicLine.getRightContext());
+		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext()
+				.equals(kwicLine.getLeftContext()) && this.getKwic()
+				.equals(kwicLine.getKwic()) && this.getRightContext().equals(kwicLine.getRightContext());
 	}
 
 	public String getKwic() {
 		return this.kwic;
 	}
 
-	public String getLeftContext() {
+	public List<String> getLeftContext() {
 		return this.leftContext;
 	}
 
@@ -41,7 +42,7 @@ public class KWICLine {
 		return this.ref;
 	}
 
-	public String getRightContext() {
+	public List<String> getRightContext() {
 		return this.rightContext;
 	}
 
@@ -54,7 +55,7 @@ public class KWICLine {
 		this.kwic = kwic;
 	}
 
-	public void setLeftContext(String leftContext) {
+	public void setLeftContext(List<String> leftContext) {
 		this.leftContext = leftContext;
 	}
 
@@ -62,7 +63,7 @@ public class KWICLine {
 		this.ref = ref;
 	}
 
-	public void setRightContext(String rightContext) {
+	public void setRightContext(List<String> rightContext) {
 		this.rightContext = rightContext;
 	}
 }

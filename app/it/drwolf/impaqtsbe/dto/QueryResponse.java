@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse {
-	private Boolean inProgress = Boolean.TRUE;
 	private List<KWICLine> kwicLines = new ArrayList<>();
+	private List<CollocationItem> collocations = new ArrayList<>();
+	private FrequencyItem frequency = new FrequencyItem();
+	private List<DescResponse> descResponses = new ArrayList<>();
+	private Boolean inProgress = Boolean.TRUE;
 	private Integer currentSize;
 	private List<String> metadataValues = new ArrayList<>();
-	private List<CollocationItem> collocations = new ArrayList<>();
 
 	public List<CollocationItem> getCollocations() {
 		return this.collocations;
@@ -16,6 +18,10 @@ public class QueryResponse {
 
 	public Integer getCurrentSize() {
 		return this.currentSize;
+	}
+
+	public List<DescResponse> getDescResponses() {
+		return this.descResponses;
 	}
 
 	public Boolean getInProgress() {
@@ -49,4 +55,13 @@ public class QueryResponse {
 	public void setMetadataValues(List<String> metadataValues) {
 		this.metadataValues = metadataValues;
 	}
+
+	public FrequencyItem getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(FrequencyItem frequency) {
+		this.frequency = frequency;
+	}
+
 }

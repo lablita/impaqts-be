@@ -12,9 +12,25 @@ public class QueryRequest {
 	private QueryPattern queryPattern;
 	private CollocationQueryRequest collocationQueryRequest;
 	private SortQueryRequest sortQueryRequest;
+	private ContextConcordanceQueryRequest contextConcordanceQueryRequest;
+	private FrequencyQueryRequest frequencyQueryRequest;
+
+	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
+		return concordanceFromCollocationParameters;
+	}
+
+	public void setConcordanceFromCollocationParameters(ConcordanceFromCollocationParameters concordanceFromCollocationParameters) {
+		this.concordanceFromCollocationParameters = concordanceFromCollocationParameters;
+	}
+
+	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
+	}
+
+	public ContextConcordanceQueryRequest getContextConcordanceQueryRequest() {
+		return this.contextConcordanceQueryRequest;
 	}
 
 	public String getCorpus() {
@@ -31,6 +47,10 @@ public class QueryRequest {
 
 	public Integer getEnd() {
 		return this.end;
+	}
+
+	public FrequencyQueryRequest getFrequencyQueryRequest() {
+		return this.frequencyQueryRequest;
 	}
 
 	public boolean getQueryInCql() {
@@ -57,6 +77,10 @@ public class QueryRequest {
 		this.collocationQueryRequest = collocationQueryRequest;
 	}
 
+	public void setContextConcordanceQueryRequest(ContextConcordanceQueryRequest contextConcordanceQueryRequest) {
+		this.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+	}
+
 	public void setCorpus(String corpus) {
 		this.corpus = corpus;
 	}
@@ -71,6 +95,10 @@ public class QueryRequest {
 
 	public void setEnd(Integer end) {
 		this.end = end;
+	}
+
+	public void setFrequencyQueryRequest(FrequencyQueryRequest frequencyQueryRequest) {
+		this.frequencyQueryRequest = frequencyQueryRequest;
 	}
 
 	public void setQueryInCql(boolean queryInCql) {

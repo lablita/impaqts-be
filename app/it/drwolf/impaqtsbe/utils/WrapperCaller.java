@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 public class WrapperCaller {
 	private static final int MAX_ITEMS = 50000;
+	private static final String ERORR_PREFIX = "ERROR";
 	private final ActorRef out;
 	private final String manateeRegistryPath;
 	private final String manateeLibPath;
@@ -82,25 +83,25 @@ public class WrapperCaller {
 					// skip comments line
 					continue;
 				}
+				JsonNode lineJson = null;
+				try {
+					lineJson = Json.parse(line);
+				} catch (RuntimeException re) {
+					this.out.tell(Json.toJson(String.format("%s Parse error line %s", ERORR_PREFIX, line)), null);
+					this.logger.error(String.format("Parse error line %s", line));
+					continue;
+				}
 				if (queryRequest.getCollocationQueryRequest() != null) {
 					//pagination collocations
 					ArrayNode newArrayNode = mapper.createArrayNode();
-					JsonNode lineJson = Json.parse(line);
 					ArrayNode arrayNode = (ArrayNode) lineJson.get("collocations");
 					for (int index = start; index < end; index++) {
 						newArrayNode.add(arrayNode.get(index));
 					}
 					((ObjectNode) lineJson).replace("collocations", newArrayNode);
-					this.out.tell(lineJson, null);
-				} else {
-					try {
-						this.out.tell(Json.parse(line), null);
-					} catch (RuntimeException re) {
-						this.logger.error(String.format("Parse error line %s", line));
-					}
 				}
+				this.out.tell(lineJson, null);
 			}
-			// this.out.tell(mapper.createObjectNode(), null);
 		}
 	}
 

@@ -1,0 +1,19 @@
+image: drwolf/openjdk_awscli
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Deploy to production
+          deployment: production
+          caches:
+            - ivy2
+            - maven
+            - sbt
+          script: # Modify the commands below to build your repository.
+            - ./sbt/bin/sbt clean compile dist
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            - DOMAIN_ORIGIN_REGISTRY=$(aws cloudfront get-distribution --id E263CTGMHO0P4P --query 'Distribution.DistributionConfig.Origins.Items[?Id==`impaqts-be.cloudvw.it`].DomainName' --output text)
+            - "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./target/universal/impaqts-be-dist.zip drwolf@${DOMAIN_ORIGIN_REGISTRY}:impaqts-be-dist.zip"
+            - "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null drwolf@${DOMAIN_ORIGIN_REGISTRY} ./deploy-impaqts-be.sh"

@@ -8,6 +8,7 @@ public class KWICLine {
 	private List<String> leftContext;
 	private String kwic;
 	private List<String> rightContext;
+	private Long pos;
 
 	public KWICLine(String ref, List<String> leftContext, String kwic, List<String> rightContext) {
 		this.ref = ref;
@@ -25,9 +26,9 @@ public class KWICLine {
 			return false;
 		}
 		KWICLine kwicLine = (KWICLine) o;
-		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext()
-				.equals(kwicLine.getLeftContext()) && this.getKwic()
-				.equals(kwicLine.getKwic()) && this.getRightContext().equals(kwicLine.getRightContext());
+		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext().equals(kwicLine.getLeftContext())
+				&& this.getKwic().equals(kwicLine.getKwic()) && this.getRightContext()
+				.equals(kwicLine.getRightContext());
 	}
 
 	public String getKwic() {
@@ -36,6 +37,10 @@ public class KWICLine {
 
 	public List<String> getLeftContext() {
 		return this.leftContext;
+	}
+
+	public Long getPos() {
+		return pos;
 	}
 
 	public String getRef() {
@@ -57,6 +62,10 @@ public class KWICLine {
 
 	public void setLeftContext(List<String> leftContext) {
 		this.leftContext = leftContext;
+	}
+
+	public void setPos(Long pos) {
+		this.pos = pos;
 	}
 
 	public void setRef(String ref) {

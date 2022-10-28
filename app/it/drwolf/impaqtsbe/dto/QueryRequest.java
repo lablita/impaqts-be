@@ -14,19 +14,15 @@ public class QueryRequest {
 	private SortQueryRequest sortQueryRequest;
 	private ContextConcordanceQueryRequest contextConcordanceQueryRequest;
 	private FrequencyQueryRequest frequencyQueryRequest;
-
-	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
-		return concordanceFromCollocationParameters;
-	}
-
-	public void setConcordanceFromCollocationParameters(ConcordanceFromCollocationParameters concordanceFromCollocationParameters) {
-		this.concordanceFromCollocationParameters = concordanceFromCollocationParameters;
-	}
-
+	private WideContextRequest wideContextRequest = new WideContextRequest();
 	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
+	}
+
+	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
+		return concordanceFromCollocationParameters;
 	}
 
 	public ContextConcordanceQueryRequest getContextConcordanceQueryRequest() {
@@ -69,12 +65,21 @@ public class QueryRequest {
 		return this.start;
 	}
 
+	public WideContextRequest getWideContextRequest() {
+		return wideContextRequest;
+	}
+
 	public boolean isQueryInCql() {
 		return this.queryInCql;
 	}
 
 	public void setCollocationQueryRequest(CollocationQueryRequest collocationQueryRequest) {
 		this.collocationQueryRequest = collocationQueryRequest;
+	}
+
+	public void setConcordanceFromCollocationParameters(
+			ConcordanceFromCollocationParameters concordanceFromCollocationParameters) {
+		this.concordanceFromCollocationParameters = concordanceFromCollocationParameters;
 	}
 
 	public void setContextConcordanceQueryRequest(ContextConcordanceQueryRequest contextConcordanceQueryRequest) {
@@ -115,5 +120,9 @@ public class QueryRequest {
 
 	public void setStart(Integer start) {
 		this.start = start;
+	}
+
+	public void setWideContextRequest(WideContextRequest wideContextRequest) {
+		this.wideContextRequest = wideContextRequest;
 	}
 }

@@ -1,9 +1,13 @@
 package it.drwolf.impaqtsbe.controllers;
 
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.startup.Startup;
+import it.drwolf.impaqtsbe.utils.WrapperCaller;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -75,6 +79,27 @@ public class CorpusController extends Controller {
 
 	private void extractZIPCorpus(Path compressedCorpus) throws ZipException {
 		new ZipFile(compressedCorpus.toString()).extractAll(compressedCorpus.getParent().toString());
+	}
+
+	public Result getWideContext(String corpusName, Long pos, Integer hitlen) {
+		QueryRequest qr = new QueryRequest();
+		qr.getWideContextRequest().setCorpusName(corpusName);
+		qr.getWideContextRequest().setPos(pos);
+		qr.getWideContextRequest().setHitlen(hitlen);
+		qr.setCorpus(corpusName);
+		QueryResponse queryResponse = null;
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath());
+		try {
+			queryResponse = wrapperCaller.executeWideContextQuery(qr);
+		} catch (IOException e) {
+			final String wideContextRetrievalErrorMessage = String.format("Error while retrieving context %s %d %d",
+					corpusName, pos, hitlen);
+			return Results.internalServerError(wideContextRetrievalErrorMessage);
+		}
+		return Results.ok(Json.toJson(queryResponse));
 	}
 
 	public Result uploadCorpus(Http.Request request) {

@@ -40,6 +40,7 @@ public class ExternalProcessActor extends AbstractActor {
 		try {
 			queryRequest = Json.fromJson(message, QueryRequest.class);
 		} catch (RuntimeException re) {
+			re.printStackTrace();
 			this.logger.error("Wrong request format");
 			return;
 		}

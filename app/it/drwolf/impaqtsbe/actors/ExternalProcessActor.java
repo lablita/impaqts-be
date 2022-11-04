@@ -14,41 +14,41 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 public class ExternalProcessActor extends AbstractActor {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private final WrapperCaller wrapperCaller;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final WrapperCaller wrapperCaller;
 
-	@Inject
-	public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
-		this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath,
-				dockerSwitch, dockerManateeRegistry, dockerManateePath);
-	}
+    @Inject
+    public ExternalProcessActor(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
+                                String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath, String cacheDir) {
+        this.wrapperCaller = new WrapperCaller(out, manateeRegistryPath, manateeLibPath, javaExecutable, wrapperPath,
+                dockerSwitch, dockerManateeRegistry, dockerManateePath, cacheDir);
+    }
 
-	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
-		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
-	}
+    public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
+                              String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath, String cacheDir) {
+        return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
+                wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, cacheDir);
+    }
 
-	@Override
-	public AbstractActor.Receive createReceive() {
-		return this.receiveBuilder().match(JsonNode.class, message -> this.manageQueryRequest(message)).build();
-	}
+    @Override
+    public AbstractActor.Receive createReceive() {
+        return this.receiveBuilder().match(JsonNode.class, message -> this.manageQueryRequest(message)).build();
+    }
 
-	private void manageQueryRequest(JsonNode message) {
-		QueryRequest queryRequest = null;
-		try {
-			queryRequest = Json.fromJson(message, QueryRequest.class);
-		} catch (RuntimeException re) {
-			re.printStackTrace();
-			this.logger.error("Wrong request format");
-			return;
-		}
-		try {
-			this.wrapperCaller.executeQuery(queryRequest);
-		} catch (IOException e) {
-			this.logger.error(String.format("Error executing query %s", Json.stringify(message)));
-		}
-	}
+    private void manageQueryRequest(JsonNode message) {
+        QueryRequest queryRequest = null;
+        try {
+            queryRequest = Json.fromJson(message, QueryRequest.class);
+        } catch (RuntimeException re) {
+            re.printStackTrace();
+            this.logger.error("Wrong request format");
+            return;
+        }
+        try {
+            this.wrapperCaller.executeQuery(queryRequest);
+        } catch (IOException e) {
+            this.logger.error(String.format("Error executing query %s", Json.stringify(message)));
+        }
+    }
 
 }

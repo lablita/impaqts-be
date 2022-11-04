@@ -1,10 +1,17 @@
-image: drwolf/openjdk_awscli
-
 pipelines:
   branches:
+    develop:
+      - step:
+          name: Deploy to develop - SONAR
+          deployment: staging
+          image: node:14
+          script:
+            - npm ci
+            - npm run sonar
     master:
       - step:
           name: Deploy to production
+          image: drwolf/openjdk_awscli
           deployment: production
           caches:
             - ivy2

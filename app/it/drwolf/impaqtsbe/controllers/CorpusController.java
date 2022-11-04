@@ -17,13 +17,13 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class CorpusController extends Controller {
-
-	private static final String APPLICATION_GZIP = "application/gzip";
+	public static final String EXISTS_BUT_IS_NOT_A_FOLDER = "%s exists but is not a folder.";
 	private static final String APPLICATION_ZIP = "application/zip";
 	private final Startup startup;
 
@@ -40,7 +40,7 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!corpusFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", corpusName);
+			final String notAFolderMessage = String.format(EXISTS_BUT_IS_NOT_A_FOLDER, corpusName);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable
@@ -115,7 +115,7 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!corpusContainerFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", corporaFolderPath);
+			final String notAFolderMessage = String.format(EXISTS_BUT_IS_NOT_A_FOLDER, corporaFolderPath);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable
@@ -146,7 +146,6 @@ public class CorpusController extends Controller {
 			return Results.internalServerError(contentTypeNotRetrievedMessage);
 		}
 		String contentType = urlConnection.getContentType();
-		String extractedCorpusFolder = null;
 		if (contentType != null) {
 			try {
 				if (APPLICATION_ZIP.equals(contentType)) {
@@ -166,7 +165,14 @@ public class CorpusController extends Controller {
 					compressedCorpus);
 			return Results.internalServerError(contentTypeNotRetrievedMessage);
 		}
-		compressedCorpus.toFile().delete();
+		try {
+			Files.deleteIfExists(compressedCorpus);
+		} catch (IOException e) {
+			final String compressedCorpusNotDeletable = String.format(
+					"Cannot delete compressed corpus after upload: %s.", compressedCorpus);
+			return Results.internalServerError(compressedCorpusNotDeletable);
+		}
+
 		final String okMessage = String.format(this.startup.getCorporaFolderPath());
 		return Results.ok(okMessage);
 	}
@@ -185,7 +191,7 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!registryContainerFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", registryContainerFolder);
+			final String notAFolderMessage = String.format(EXISTS_BUT_IS_NOT_A_FOLDER, registryContainerFolder);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable

@@ -4,7 +4,6 @@ import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 import it.drwolf.impaqtsbe.actors.ExternalProcessActor;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
-import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.startup.Startup;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
 import play.libs.streams.ActorFlow;
@@ -38,7 +37,6 @@ public class QueryController extends Controller {
 		QueryRequest queryRequest = new QueryRequest();
 		queryRequest.setCorpus(corpus);
 		queryRequest.setCorpusMetadatum(metadatum);
-		QueryResponse response = null;
 		try {
 			return Results.ok(this.wrapperCaller.retrieveMetadatumValues(queryRequest));
 		} catch (IOException e) {

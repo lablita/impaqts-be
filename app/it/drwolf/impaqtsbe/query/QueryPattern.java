@@ -13,12 +13,12 @@ public class QueryPattern {
 	private QueryStructure structPattern = new QueryStructure();
 
 	public QueryPattern() {
-
+		// empty on purpose
 	}
 
 	@JsonIgnore
 	public String getCql() {
-		String cql = "";
+		StringBuilder cql = new StringBuilder();
 		if (this.tokPattern != null && !this.tokPattern.isEmpty()) {
 			// caso in cui ho esattamente 2 token e il secondo è un filtro con contesto
 			if (this.tokPattern.size() == 2 && this.tokPattern.get(1).getIsFilter()
@@ -26,25 +26,25 @@ public class QueryPattern {
 					&& this.tokPattern.get(0).getMaxRepetitions() == 1
 					&& this.tokPattern.get(1).getMinRepetitions() == 1
 					&& this.tokPattern.get(1).getMaxRepetitions() == 1) {
-				cql = "(meet " + this.tokPattern.get(0).getCql() + " " + this.tokPattern.get(1).getCql();
-				cql += " -" + this.tokPattern.get(1).getFilterContextLeft() + " " + this.tokPattern.get(1)
-						.getFilterContextRight() + ")";
+				cql.append("(meet " + this.tokPattern.get(0).getCql() + " " + this.tokPattern.get(1).getCql());
+				cql.append(" -" + this.tokPattern.get(1).getFilterContextLeft() + " " + this.tokPattern.get(1)
+						.getFilterContextRight() + ")");
 			}
 			// caso normale
 			else {
 				for (QueryToken t : this.tokPattern) {
-					cql += t.getCql();
+					cql.append(t.getCql());
 				}
 			}
 			if (this.structPattern != null) {
-				cql = this.structPattern.getCql(cql);
+				cql = new StringBuilder(this.structPattern.getCql(cql.toString()));
 			}
 		}
 		// caso in cui faccio la query solo sulla struttura
 		else if (this.structPattern != null) {
-			cql = this.structPattern.getCql();
+			cql = new StringBuilder(this.structPattern.getCql());
 		}
-		return cql;
+		return cql.toString();
 	}
 
 	public QueryStructure getStructPattern() {
@@ -59,7 +59,7 @@ public class QueryPattern {
 		this.structPattern = structPattern;
 	}
 
-	public void setTokPattern(ArrayList<QueryToken> tokPattern) {
+	public void setTokPattern(List<QueryToken> tokPattern) {
 		this.tokPattern = tokPattern;
 	}
 }

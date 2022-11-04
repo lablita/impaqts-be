@@ -21,25 +21,25 @@ public class QueryToken extends QueryElement {
 	@Override
 	@JsonIgnore
 	public String getCql() {
-		String cql = "[";
+		StringBuilder cql = new StringBuilder("[");
 		if (!this.getTags().isEmpty()) {
 			for (List<QueryTag> andList : this.getTags()) {
-				cql += "(";
+				cql.append("(");
 				for (QueryTag orEl : andList) {
-					cql += orEl.getCql() + " | ";
+					cql.append(orEl.getCql() + " | ");
 				}
-				cql = cql.substring(0, cql.length() - 3) + ")";
-				cql += " & ";
+				cql = new StringBuilder(cql.substring(0, cql.length() - 3) + ")");
+				cql.append(" & ");
 			}
-			cql = cql.substring(0, cql.length() - 3);
+			cql = new StringBuilder(cql.substring(0, cql.length() - 3));
 		}
-		cql = cql + "]";
+		cql.append("]");
 		if (this.minRepetitions != 1 || this.maxRepetitions != 1) {
-			cql = cql + "{" + this.minRepetitions + "," + this.maxRepetitions + "}";
+			cql.append("{" + this.minRepetitions + "," + this.maxRepetitions + "}");
 		} else if (this.optional) {
-			cql = cql + "?";
+			cql.append("?");
 		}
-		return cql;
+		return cql.toString();
 	}
 
 	public int getFilterContextLeft() {

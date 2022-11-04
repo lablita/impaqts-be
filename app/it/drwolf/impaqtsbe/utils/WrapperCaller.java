@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WrapperCaller {
+    public static final String MANATEE_REGISTRY = "MANATEE_REGISTRY";
+    public static final String USR_LOCAL_BIN_DOCKER = "/usr/local/bin/docker";
+    public static final String MANATEE = "manatee";
+    public static final String NAME_PARAM = "--name";
     private static final int MAX_ITEMS = 50000;
     private static final String ERORR_PREFIX = "ERROR";
     private final ActorRef out;
@@ -30,7 +34,6 @@ public class WrapperCaller {
     private final String dockerSwitch;
     private final String dockerManateeRegistry;
     private final String dockerManateePath;
-
     private final String cacheDir;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -188,5 +191,4 @@ public class WrapperCaller {
         }
         return Json.toJson(null);
     }
-
 }

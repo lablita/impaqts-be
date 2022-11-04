@@ -92,9 +92,9 @@ public class Startup {
             this.logger.error("Java executable path not found. Stopping server.");
             System.exit(1);
         }
-        this.corporaFolderPath = configuration.getString(Startup.CORPORA_FOLDER_PATH);
+        this.corporaFolderPath = configuration.getString((Startup.CORPORA_FOLDER_PATH));
         if (this.corporaFolderPath == null || this.corporaFolderPath.isEmpty()) {
-            this.logger.error("Corpora folder path not found. Stopping server.");
+            this.logger.error("Java executable path not found. Stopping server.");
             System.exit(1);
         }
         this.cacheDir = configuration.getString(Startup.CACHE_DIR);
@@ -126,13 +126,13 @@ public class Startup {
             }
         } else {
             this.dockerManateeRegistry = configuration.getString(Startup.DOCKER_MANATEE_REGISTRY);
-            if (this.dockerSwitch != null && this.dockerSwitch.equals("yes") && (this.dockerManateeRegistry == null
+            if (this.dockerSwitch.equals("yes") && (this.dockerManateeRegistry == null
                     || this.dockerManateeRegistry.isEmpty())) {
                 this.logger.error("Docker Manatee Registry not found. Stopping server.");
                 System.exit(1);
             }
             this.dockerManateePath = configuration.getString(Startup.DOCKER_MANATEE_PATH);
-            if (this.dockerSwitch != null && this.dockerSwitch.equals("yes") && (this.dockerManateePath == null
+            if (this.dockerSwitch.equals("yes") && (this.dockerManateePath == null
                     || this.dockerManateePath.isEmpty())) {
                 this.logger.error("Docker Manatee Path not found. Stopping server.");
                 System.exit(1);

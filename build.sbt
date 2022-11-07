@@ -18,4 +18,7 @@ libraryDependencies += "commons-io" % "commons-io" % "2.11.0"
 libraryDependencies += "com.auth0" % "auth0" % "1.17.0"
 // https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt
 libraryDependencies += "com.nimbusds" % "nimbus-jose-jwt" % "9.25.6"
+// https://mvnrepository.com/artifact/org.apache.commons/commons-text
+libraryDependencies += "org.apache.commons" % "commons-text" % "1.10.0"
+
 PlayKeys.externalizeResources := false

@@ -74,7 +74,7 @@ public class QueryController extends Controller {
 		}
 		final Optional<Boolean> authenticatedOpt = Optional.of(authenticated);
 		return WebSocket.Json.acceptOrResult(request -> CompletableFuture.completedFuture(authenticatedOpt.map(user -> {
-			if (user) {
+			if (Boolean.TRUE.equals(user)) {
 				return F.Either.<Result, Flow<JsonNode, JsonNode, ?>>Right(this.getActor(accessToken));
 			}
 			return null;

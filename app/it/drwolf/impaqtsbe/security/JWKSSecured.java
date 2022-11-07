@@ -86,13 +86,6 @@ public class JWKSSecured extends Security.Authenticator {
 		return null;
 	}
 
-	private String getTokenFromAuthorizationHeader(String header) {
-		if (header.startsWith("Bearer ")) {
-			return header.replace("Bearer ", "");
-		}
-		return null;
-	}
-
 	public Optional<String> getUsername(String token) {
 		try {
 			return Optional.of(this.doGetCurrentUser(token));

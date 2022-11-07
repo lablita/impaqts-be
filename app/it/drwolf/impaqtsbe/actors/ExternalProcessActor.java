@@ -27,7 +27,7 @@ public class ExternalProcessActor extends AbstractActor {
 	@Inject
 	public ExternalProcessActor(ActorRef actorRef, String manateeRegistryPath, String manateeLibPath,
 			String javaExecutable, String wrapperPath, String dockerSwitch, String dockerManateeRegistry,
-			String dockerManateePath, JWKSSecured jwksSecured, String accessToken, String cacheDir) {
+			String dockerManateePath, String cacheDir, JWKSSecured jwksSecured, String accessToken) {
 		this.wrapperCaller = new WrapperCaller(actorRef, manateeRegistryPath, manateeLibPath, javaExecutable,
 				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, cacheDir);
 		this.jwkSecured = jwksSecured;

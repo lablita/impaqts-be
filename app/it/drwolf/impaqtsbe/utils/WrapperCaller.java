@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WrapperCaller {
+
 	public static final String MANATEE_REGISTRY = "MANATEE_REGISTRY";
 	public static final String USR_LOCAL_BIN_DOCKER = "/usr/local/bin/docker";
 	public static final String MANATEE = "manatee";
@@ -36,11 +37,13 @@ public class WrapperCaller {
 	private final String dockerSwitch;
 	private final String dockerManateeRegistry;
 	private final String dockerManateePath;
+	private final String cacheDir;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
-			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath) {
+			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
+			String cacheDir) {
 		this.out = out;
 		this.manateeRegistryPath = manateeRegistryPath;
 		this.manateeLibPath = manateeLibPath;
@@ -49,6 +52,7 @@ public class WrapperCaller {
 		this.dockerSwitch = dockerSwitch;
 		this.dockerManateeRegistry = dockerManateeRegistry;
 		this.dockerManateePath = dockerManateePath;
+		this.cacheDir = cacheDir;
 	}
 
 	public void executeQuery(QueryRequest queryRequest) throws IOException {
@@ -64,18 +68,18 @@ public class WrapperCaller {
 		if (this.dockerSwitch.equals("yes")) {
 			params = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry, "-v",
 					this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar", this.wrapperPath,
-					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir, "-j",
 					Json.stringify(Json.toJson(queryRequest)));
 			List<String> paramsEscaped = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry,
 					"-v", this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar",
-					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
-					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir,
+					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
 			logger.info(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			this.logger.debug("Query: " + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
 			this.logger.debug("CQL: " + Json.toJson(queryRequest.getQueryPattern().getCql()));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
 		logger.info(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);
@@ -123,24 +127,25 @@ public class WrapperCaller {
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
 			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
-					this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar", this.wrapperPath,
-					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir, "-j",
 					Json.stringify(Json.toJson(queryRequest)));
 			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
-					"-v", this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar",
-					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
-					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
-			logger.info(paramsEscaped.stream().collect(Collectors.joining(" ")));
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir,
+					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			this.logger.debug("Query: " + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
-		logger.info(params.stream().collect(Collectors.joining(" ")));
+		System.out.println(params.stream().collect(Collectors.joining(" ")));
 		processBuilder.command(params);
 		processBuilder.redirectErrorStream(false);
 		Process process = processBuilder.start();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			ObjectMapper mapper = new ObjectMapper();
 			String line;
 			while ((line = reader.readLine()) != null) {
 				this.logger.debug("Result line: " + line);
@@ -155,7 +160,8 @@ public class WrapperCaller {
 					this.logger.error(String.format("Parse error line %s", line));
 					continue;
 				}
-				return Json.fromJson(lineJson, QueryResponse.class);
+				QueryResponse queryResponse = Json.fromJson(lineJson, QueryResponse.class);
+				return queryResponse;
 			}
 		}
 		return null;
@@ -167,17 +173,17 @@ public class WrapperCaller {
 		List<String> params;
 		if (this.dockerSwitch.equals("yes")) {
 			params = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry, "-v",
-					this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar", this.wrapperPath,
-					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
+					this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir, "-j",
 					Json.stringify(Json.toJson(queryRequest)));
 			List<String> paramsEscaped = Arrays.asList("/usr/local/bin/docker", "run", "-e", this.dockerManateeRegistry,
-					"-v", this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar",
-					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-j",
-					"\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+					"-v", this.dockerManateePath, "--rm", "--name", "manatee", "manatee", "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir,
+					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
 			System.out.println(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					queryRequest.getCorpus(), "-j", Json.stringify(Json.toJson(queryRequest)));
+					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
 		}
 		processBuilder.command(params);
 		System.out.println(params.stream().collect(Collectors.joining(" ")));
@@ -194,5 +200,4 @@ public class WrapperCaller {
 		}
 		return Json.toJson(null);
 	}
-
 }

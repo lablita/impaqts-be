@@ -39,14 +39,15 @@ public class QueryController extends Controller {
 		this.wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
 				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
 				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
-				this.startup.getDockerManateePath());
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
 	}
 
 	private Flow<JsonNode, JsonNode, ?> getActor(final String idToken) {
 		return ActorFlow.actorRef(out -> ExternalProcessActor.props(out, this.startup.getManateeRegistryPath(),
-				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
-				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
-				this.startup.getDockerManateePath(), this.jwkSecured, idToken), this.actorSystem, this.materializer);
+						this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+						this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+						this.startup.getDockerManateePath(), this.startup.getCacheDir(), this.jwkSecured, idToken),
+				this.actorSystem, this.materializer);
 	}
 
 	public Result getMetadatumValues(String corpus, String metadatum) {

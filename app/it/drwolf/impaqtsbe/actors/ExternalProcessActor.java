@@ -20,7 +20,6 @@ import java.io.IOException;
 public class ExternalProcessActor extends AbstractActor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final WrapperCaller wrapperCaller;
-
 	private final String accessToken;
 	private final ActorRef actorRef;
 	private final JWKSSecured jwkSecured;
@@ -28,9 +27,9 @@ public class ExternalProcessActor extends AbstractActor {
 	@Inject
 	public ExternalProcessActor(ActorRef actorRef, String manateeRegistryPath, String manateeLibPath,
 			String javaExecutable, String wrapperPath, String dockerSwitch, String dockerManateeRegistry,
-			String dockerManateePath, JWKSSecured jwksSecured, String accessToken) {
+			String dockerManateePath, JWKSSecured jwksSecured, String accessToken, String cacheDir) {
 		this.wrapperCaller = new WrapperCaller(actorRef, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
+				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, cacheDir);
 		this.jwkSecured = jwksSecured;
 		this.accessToken = accessToken;
 		this.actorRef = actorRef;
@@ -38,9 +37,10 @@ public class ExternalProcessActor extends AbstractActor {
 
 	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
 			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
-			JWKSSecured jwksSecured, String accessToken) {
+			String cacheDir, JWKSSecured jwksSecured, String accessToken) {
 		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, jwksSecured, accessToken);
+				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, cacheDir, jwksSecured,
+				accessToken);
 	}
 
 	private boolean canUserExecuteQuery(String accessToken, QueryRequest queryRequest) {

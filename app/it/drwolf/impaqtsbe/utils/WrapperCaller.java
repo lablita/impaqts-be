@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import it.drwolf.impaqtsbe.dto.ErrorResponse;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.dto.QueryResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.libs.Json;
+import play.mvc.Http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class WrapperCaller {
 	public static final String MANATEE = "manatee";
 	public static final String NAME_PARAM = "--name";
 	private static final int MAX_ITEMS = 50000;
-	private static final String ERORR_PREFIX = "ERROR";
+	private static final String ERROR_PREFIX = "ERROR";
 	private final ActorRef out;
 	private final String manateeRegistryPath;
 	private final String manateeLibPath;
@@ -92,7 +94,12 @@ public class WrapperCaller {
 				try {
 					lineJson = Json.parse(line);
 				} catch (RuntimeException re) {
-					this.out.tell(Json.toJson(String.format("%s Parse error line %s", ERORR_PREFIX, line)), null);
+					QueryResponse qrError = new QueryResponse();
+					ErrorResponse er = new ErrorResponse();
+					er.setErrorCode(Http.Status.INTERNAL_SERVER_ERROR);
+					er.setErrorMessage(String.format("%s Parse error line %s", ERROR_PREFIX, line));
+					qrError.setErrorResponse(er);
+					this.out.tell(Json.toJson(qrError), null);
 					this.logger.error(String.format("Parse error line %s", line));
 					continue;
 				}

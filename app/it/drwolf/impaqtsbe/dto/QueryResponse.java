@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse {
+	private final List<DescResponse> descResponses = new ArrayList<>();
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
 	private FrequencyItem frequency = new FrequencyItem();
-	private final List<DescResponse> descResponses = new ArrayList<>();
 	private Boolean inProgress = Boolean.TRUE;
 	private Integer currentSize;
 	private List<String> metadataValues = new ArrayList<>();
 	private WideContextResponse wideContextResponse = new WideContextResponse();
+	private ErrorResponse errorResponse;
 
 	public List<CollocationItem> getCollocations() {
 		return this.collocations;
@@ -23,6 +24,10 @@ public class QueryResponse {
 
 	public List<DescResponse> getDescResponses() {
 		return this.descResponses;
+	}
+
+	public ErrorResponse getErrorResponse() {
+		return errorResponse;
 	}
 
 	public FrequencyItem getFrequency() {
@@ -51,6 +56,10 @@ public class QueryResponse {
 
 	public void setCurrentSize(Integer currentSize) {
 		this.currentSize = currentSize;
+	}
+
+	public void setErrorResponse(ErrorResponse errorResponse) {
+		this.errorResponse = errorResponse;
 	}
 
 	public void setFrequency(FrequencyItem frequency) {

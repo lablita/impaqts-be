@@ -8,7 +8,7 @@ GET     /                                               controllers.HomeControll
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                   controllers.Assets.versioned(path="/public", file: Asset)
 
-GET     /web-socket                                     it.drwolf.impaqtsbe.controllers.QueryController.getWebSocket()
+GET     /web-socket                                     it.drwolf.impaqtsbe.controllers.QueryController.getWebSocket(idToken: String ?= null)
 
 + nocsrf
 GET     /metadatum-values/:corpus/:metadatum            it.drwolf.impaqtsbe.controllers.QueryController.getMetadatumValues(corpus: String, metadatum: String)

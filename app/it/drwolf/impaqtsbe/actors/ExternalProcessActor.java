@@ -21,33 +21,33 @@ public class ExternalProcessActor extends AbstractActor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final WrapperCaller wrapperCaller;
 
-	private final String idToken;
+	private final String accessToken;
 	private final ActorRef actorRef;
 	private final JWKSSecured jwkSecured;
 
 	@Inject
 	public ExternalProcessActor(ActorRef actorRef, String manateeRegistryPath, String manateeLibPath,
 			String javaExecutable, String wrapperPath, String dockerSwitch, String dockerManateeRegistry,
-			String dockerManateePath, JWKSSecured jwksSecured, String idToken) {
+			String dockerManateePath, JWKSSecured jwksSecured, String accessToken) {
 		this.wrapperCaller = new WrapperCaller(actorRef, manateeRegistryPath, manateeLibPath, javaExecutable,
 				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath);
 		this.jwkSecured = jwksSecured;
-		this.idToken = idToken;
+		this.accessToken = accessToken;
 		this.actorRef = actorRef;
 	}
 
 	public static Props props(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
 			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
-			JWKSSecured jwksSecured, String idToken) {
+			JWKSSecured jwksSecured, String accessToken) {
 		return Props.create(ExternalProcessActor.class, out, manateeRegistryPath, manateeLibPath, javaExecutable,
-				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, jwksSecured, idToken);
+				wrapperPath, dockerSwitch, dockerManateeRegistry, dockerManateePath, jwksSecured, accessToken);
 	}
 
-	private boolean canUserExecuteQuery(String idToken, QueryRequest queryRequest) {
-		if (idToken != null && !idToken.isEmpty()) {
-			boolean isAdmin = this.jwkSecured.isAdmin(idToken);
-			boolean isAdvancedUser = this.jwkSecured.isAdvancedUser(idToken);
-			boolean isUser = this.jwkSecured.isUser(idToken);
+	private boolean canUserExecuteQuery(String accessToken, QueryRequest queryRequest) {
+		if (accessToken != null && !accessToken.isEmpty()) {
+			boolean isAdmin = this.jwkSecured.isAdmin(accessToken);
+			boolean isAdvancedUser = this.jwkSecured.isAdvancedUser(accessToken);
+			boolean isUser = this.jwkSecured.isUser(accessToken);
 			logger.debug(String.format("Admin: %b - Advanced user: %b - User: %b", isAdmin, isAdvancedUser, isUser));
 		}
 		return true;
@@ -68,7 +68,7 @@ public class ExternalProcessActor extends AbstractActor {
 			return;
 		}
 		try {
-			boolean canUserExecuteQuery = this.canUserExecuteQuery(this.idToken, queryRequest);
+			boolean canUserExecuteQuery = this.canUserExecuteQuery(this.accessToken, queryRequest);
 			if (canUserExecuteQuery) {
 				this.wrapperCaller.executeQuery(queryRequest);
 			} else {

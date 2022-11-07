@@ -30,22 +30,18 @@ public class JWKSSecured extends Security.Authenticator {
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final Logger.ALogger logger = Logger.of(JWKSSecured.class);
-	private static String rolesField;
 	@SuppressWarnings("rawtypes")
 	private final ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
 	private final DefaultJWTClaimsVerifier<SecurityContext> jwtClaimsSetVerifier;
+	private String rolesField;
 	private String issuer;
+	private String emailField;
 
 	@Inject
 	public JWKSSecured(Config config) {
 		this.setConfig(config);
 		this.jwtClaimsSetVerifier = new DefaultJWTClaimsVerifier(null,
-				new HashSet<>(Arrays.asList("sub", "iat", "exp", "sid")));
-	}
-
-	public static void setRolesField(String rolesField) {
-		JWKSSecured.rolesField = rolesField;
-
+				new HashSet<>(Arrays.asList("sub", "iat", "exp")));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -82,7 +78,7 @@ public class JWKSSecured extends Security.Authenticator {
 	private String doGetCurrentUser(String token) throws EMMACorpusSecurityException {
 		final JWTClaimsSet claimSet = this.checkToken(token);
 		if (claimSet != null) {
-			final Object claim = claimSet.getClaim("email");
+			final Object claim = claimSet.getClaim(this.emailField);
 			if (claim != null) {
 				return claim.toString();
 			}
@@ -115,10 +111,10 @@ public class JWKSSecured extends Security.Authenticator {
 			return false;
 		}
 		if (claims != null) {
-			final Object claim = claims.getClaim(rolesField + roleString);
+			final Object claim = claims.getClaim(rolesField);
 			if (claim != null) {
-				String admin = claim.toString();
-				return "true".equals(admin);
+				String role = claim.toString();
+				return roleString.equals(role);
 			}
 		}
 		return false;
@@ -146,7 +142,8 @@ public class JWKSSecured extends Security.Authenticator {
 			JWKSSecured.logger.error("Malformed auth0.jwks.url");
 		}
 		this.issuer = config.getString("auth0.issuer");
-
+		this.rolesField = config.getString("auth0.rolesField");
+		this.emailField = config.getString("auth0.emailField");
 	}
 
 }

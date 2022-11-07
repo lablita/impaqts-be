@@ -62,19 +62,19 @@ public class QueryController extends Controller {
 		}
 	}
 
-	public WebSocket getWebSocket(String idToken) {
+	public WebSocket getWebSocket(String accessToken) {
 		// set websocket if idToken is null or if idToken is valid
 		boolean authenticated = false;
-		if (idToken == null) {
+		if (accessToken == null) {
 			authenticated = true;
 		} else {
-			String username = this.jwkSecured.getUsername(idToken).orElse(null);
+			String username = this.jwkSecured.getUsername(accessToken).orElse(null);
 			authenticated = username != null && !username.isEmpty();
 		}
 		final Optional<Boolean> authenticatedOpt = Optional.of(authenticated);
 		return WebSocket.Json.acceptOrResult(request -> CompletableFuture.completedFuture(authenticatedOpt.map(user -> {
 			if (user) {
-				return F.Either.<Result, Flow<JsonNode, JsonNode, ?>>Right(this.getActor(idToken));
+				return F.Either.<Result, Flow<JsonNode, JsonNode, ?>>Right(this.getActor(accessToken));
 			}
 			return null;
 		}).orElseGet(() -> F.Either.Left(Results.forbidden()))));

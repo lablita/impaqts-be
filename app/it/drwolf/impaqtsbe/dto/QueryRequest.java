@@ -17,12 +17,14 @@ public class QueryRequest {
 	private WideContextRequest wideContextRequest = new WideContextRequest();
 	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
 
+	private String queryType;
+
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
 	}
 
 	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
-		return concordanceFromCollocationParameters;
+		return this.concordanceFromCollocationParameters;
 	}
 
 	public ContextConcordanceQueryRequest getContextConcordanceQueryRequest() {
@@ -57,6 +59,10 @@ public class QueryRequest {
 		return this.queryPattern;
 	}
 
+	public String getQueryType() {
+		return this.queryType;
+	}
+
 	public SortQueryRequest getSortQueryRequest() {
 		return this.sortQueryRequest;
 	}
@@ -66,7 +72,7 @@ public class QueryRequest {
 	}
 
 	public WideContextRequest getWideContextRequest() {
-		return wideContextRequest;
+		return this.wideContextRequest;
 	}
 
 	public boolean isQueryInCql() {
@@ -112,6 +118,10 @@ public class QueryRequest {
 
 	public void setQueryPattern(QueryPattern queryPattern) {
 		this.queryPattern = queryPattern;
+	}
+
+	public void setQueryType(String queryType) {
+		this.queryType = queryType;
 	}
 
 	public void setSortQueryRequest(SortQueryRequest sortQueryRequest) {

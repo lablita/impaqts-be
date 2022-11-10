@@ -89,6 +89,7 @@ public class CorpusController extends Controller {
 		qr.getWideContextRequest().setPos(pos);
 		qr.getWideContextRequest().setHitlen(hitlen);
 		qr.setCorpus(corpusName);
+		qr.setQueryType("WIDE_CONTEXT_QUERY_REQUEST");
 		QueryResponse queryResponse = null;
 		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
 				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),

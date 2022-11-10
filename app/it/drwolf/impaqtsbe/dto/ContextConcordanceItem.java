@@ -2,13 +2,13 @@ package it.drwolf.impaqtsbe.dto;
 
 public class ContextConcordanceItem {
 	private String window;
-	private int token;
+	private Integer tokens;
 	private String term;
 	private String attribute; // WORD, LEMMA, ...
 	private String item;
 
 	public String getAttribute() {
-		return attribute;
+		return this.attribute;
 	}
 
 	public String getItem() {
@@ -19,8 +19,8 @@ public class ContextConcordanceItem {
 		return this.term;
 	}
 
-	public int getToken() {
-		return this.token;
+	public Integer getTokens() {
+		return this.tokens;
 	}
 
 	public String getWindow() {
@@ -39,8 +39,8 @@ public class ContextConcordanceItem {
 		this.term = term;
 	}
 
-	public void setToken(int token) {
-		this.token = token;
+	public void setTokens(Integer tokens) {
+		this.tokens = tokens;
 	}
 
 	public void setWindow(String window) {

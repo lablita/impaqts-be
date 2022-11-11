@@ -5,7 +5,7 @@ public class DescResponse {
 	private String toUrl;
 	private float rel;
 	private String arg;
-	private String op;
+	private String operation;
 	private long size;
 	private String attribute;
 	private String term;
@@ -18,19 +18,19 @@ public class DescResponse {
 	}
 
 	public String getAttribute() {
-		return attribute;
+		return this.attribute;
 	}
 
 	public String getNiceArg() {
 		return this.niceArg;
 	}
 
-	public String getOp() {
-		return this.op;
+	public String getOperation() {
+		return this.operation;
 	}
 
 	public String getPosition() {
-		return position;
+		return this.position;
 	}
 
 	public float getRel() {
@@ -42,7 +42,7 @@ public class DescResponse {
 	}
 
 	public String getTerm() {
-		return term;
+		return this.term;
 	}
 
 	public String getToUrl() {
@@ -50,11 +50,11 @@ public class DescResponse {
 	}
 
 	public Integer getTokens() {
-		return tokens;
+		return this.tokens;
 	}
 
 	public String getWindow() {
-		return window;
+		return this.window;
 	}
 
 	public void setArg(String arg) {
@@ -69,8 +69,8 @@ public class DescResponse {
 		this.niceArg = niceArg;
 	}
 
-	public void setOp(String op) {
-		this.op = op;
+	public void setOperation(String operation) {
+		this.operation = operation;
 	}
 
 	public void setPosition(String position) {

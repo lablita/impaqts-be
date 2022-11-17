@@ -83,6 +83,25 @@ public class CorpusController extends Controller {
 		}
 	}
 
+	public Result getCorpusInfo(String corpusName) {
+		QueryRequest qr = new QueryRequest();
+		qr.setCorpus(corpusName);
+		qr.setQueryType("CORPUS_INFO");
+		QueryResponse queryResponse = null;
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
+		try {
+			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+		} catch (IOException e) {
+			final String corpusInfoErrorMessage = String.format("Error while retrieving info for corpus %s",
+					corpusName);
+			return Results.internalServerError(corpusInfoErrorMessage);
+		}
+		return Results.ok(Json.toJson(queryResponse));
+	}
+
 	public Result getWideContext(String corpusName, Long pos, Integer hitlen) {
 		QueryRequest qr = new QueryRequest();
 		qr.getWideContextRequest().setCorpusName(corpusName);
@@ -96,7 +115,7 @@ public class CorpusController extends Controller {
 				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
 				this.startup.getDockerManateePath(), this.startup.getCacheDir());
 		try {
-			queryResponse = wrapperCaller.executeWideContextQuery(qr);
+			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
 		} catch (IOException e) {
 			final String wideContextRetrievalErrorMessage = String.format("Error while retrieving context %s %d %d",
 					corpusName, pos, hitlen);

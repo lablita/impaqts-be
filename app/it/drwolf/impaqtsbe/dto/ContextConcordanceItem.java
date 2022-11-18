@@ -5,14 +5,14 @@ public class ContextConcordanceItem {
 	private Integer tokens;
 	private String term;
 	private String attribute; // WORD, LEMMA, ...
-	private String item;
+	private String lemmaFilterType;
 
 	public String getAttribute() {
 		return this.attribute;
 	}
 
-	public String getItem() {
-		return this.item;
+	public String getLemmaFilterType() {
+		return this.lemmaFilterType;
 	}
 
 	public String getTerm() {
@@ -31,8 +31,8 @@ public class ContextConcordanceItem {
 		this.attribute = attribute;
 	}
 
-	public void setItem(String item) {
-		this.item = item;
+	public void setLemmaFilterType(String lemmaFilterType) {
+		this.lemmaFilterType = lemmaFilterType;
 	}
 
 	public void setTerm(String term) {

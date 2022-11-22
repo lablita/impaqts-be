@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CorpusInfo {
+	private final List<StructInfo> structs = new ArrayList<>();
 	private List<String> aligned = new ArrayList<>();
 	private List<AlignedDetail> alignedDetails = new ArrayList<>();
 	private List<List<String>> alsizes = new ArrayList<>();
@@ -19,7 +20,6 @@ public class CorpusInfo {
 	private String encoding;
 	private String errsetdoc;
 	private List<String> freqttattrs = new ArrayList<>();
-
 	// TODO
 	// private List gramrels = new ArrayList();
 	private String info;
@@ -121,6 +121,10 @@ public class CorpusInfo {
 
 	public String getStructctx() {
 		return structctx;
+	}
+
+	public List<StructInfo> getStructs() {
+		return structs;
 	}
 
 	public List<CorpusInfoStructure> getStructures() {

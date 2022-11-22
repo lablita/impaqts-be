@@ -1,10 +1,13 @@
 package it.drwolf.impaqtsbe.dto;
 
+import it.drwolf.impaqtsbe.dto.corpusinfo.CorpusInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse {
 	private final List<DescResponse> descResponses = new ArrayList<>();
+	private final CorpusInfo corpusInfo = new CorpusInfo();
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
 	private FrequencyItem frequency = new FrequencyItem();
@@ -16,6 +19,10 @@ public class QueryResponse {
 
 	public List<CollocationItem> getCollocations() {
 		return this.collocations;
+	}
+
+	public CorpusInfo getCorpusInfo() {
+		return corpusInfo;
 	}
 
 	public Integer getCurrentSize() {

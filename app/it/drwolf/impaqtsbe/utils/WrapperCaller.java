@@ -55,6 +55,50 @@ public class WrapperCaller {
 		this.cacheDir = cacheDir;
 	}
 
+	public QueryResponse executeNonQueryRequest(QueryRequest queryRequest) throws IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.environment().put(MANATEE_REGISTRY, this.manateeRegistryPath);
+		List<String> params;
+		if (this.dockerSwitch.equals("yes")) {
+			params = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry, "-v",
+					this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar", this.wrapperPath,
+					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir, "-j",
+					Json.stringify(Json.toJson(queryRequest)));
+			List<String> paramsEscaped = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry,
+					"-v", this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar",
+					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir,
+					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
+			this.logger.debug(paramsEscaped.stream().collect(Collectors.joining(" ")));
+		} else {
+			this.logger.debug("Query: {}", StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
+			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
+					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
+		}
+		this.logger.debug(params.stream().collect(Collectors.joining(" ")));
+		processBuilder.command(params);
+		processBuilder.redirectErrorStream(false);
+		Process process = processBuilder.start();
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				this.logger.debug("Result line: {}", line);
+				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
+					// skip comments line
+					continue;
+				}
+				JsonNode lineJson = null;
+				try {
+					lineJson = Json.parse(line);
+				} catch (RuntimeException re) {
+					this.logger.error(String.format("Parse error line %s", line));
+					continue;
+				}
+				return Json.fromJson(lineJson, QueryResponse.class);
+			}
+		}
+		return null;
+	}
+
 	public void executeQuery(QueryRequest queryRequest) throws IOException {
 		int start = queryRequest.getStart();
 		int end = queryRequest.getEnd();
@@ -119,50 +163,6 @@ public class WrapperCaller {
 				this.out.tell(lineJson, null);
 			}
 		}
-	}
-
-	public QueryResponse executeWideContextQuery(QueryRequest queryRequest) throws IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.environment().put(MANATEE_REGISTRY, this.manateeRegistryPath);
-		List<String> params;
-		if (this.dockerSwitch.equals("yes")) {
-			params = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry, "-v",
-					this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar", this.wrapperPath,
-					"-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir, "-j",
-					Json.stringify(Json.toJson(queryRequest)));
-			List<String> paramsEscaped = Arrays.asList(USR_LOCAL_BIN_DOCKER, "run", "-e", this.dockerManateeRegistry,
-					"-v", this.dockerManateePath, "--rm", NAME_PARAM, MANATEE, MANATEE, "java", "-jar",
-					this.wrapperPath, "-l", this.manateeLibPath, "-c", queryRequest.getCorpus(), "-d", this.cacheDir,
-					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
-			this.logger.debug(paramsEscaped.stream().collect(Collectors.joining(" ")));
-		} else {
-			this.logger.debug("Query: {}", StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
-			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
-					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
-		}
-		this.logger.debug(params.stream().collect(Collectors.joining(" ")));
-		processBuilder.command(params);
-		processBuilder.redirectErrorStream(false);
-		Process process = processBuilder.start();
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				this.logger.debug("Result line: {}", line);
-				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
-					// skip comments line
-					continue;
-				}
-				JsonNode lineJson = null;
-				try {
-					lineJson = Json.parse(line);
-				} catch (RuntimeException re) {
-					this.logger.error(String.format("Parse error line %s", line));
-					continue;
-				}
-				return Json.fromJson(lineJson, QueryResponse.class);
-			}
-		}
-		return null;
 	}
 
 	public JsonNode retrieveMetadatumValues(QueryRequest queryRequest) throws IOException {

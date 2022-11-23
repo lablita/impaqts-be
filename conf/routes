@@ -19,3 +19,4 @@ POST    /registry/upload                                it.drwolf.impaqtsbe.cont
 DELETE  /registry                                       it.drwolf.impaqtsbe.controllers.CorpusController.deleteRegistry(registryName: String)
 
 GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.controllers.CorpusController.getWideContext(corpusName: String, pos: Long, hitlen: Integer)
+GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)

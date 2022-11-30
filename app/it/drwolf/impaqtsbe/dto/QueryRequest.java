@@ -17,6 +17,8 @@ public class QueryRequest {
 	private WideContextRequest wideContextRequest = new WideContextRequest();
 	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
 
+	private FilterConcordanceQueryRequest filterConcordanceQueryRequest;
+
 	private String queryType;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
@@ -45,6 +47,10 @@ public class QueryRequest {
 
 	public Integer getEnd() {
 		return this.end;
+	}
+
+	public FilterConcordanceQueryRequest getFilterConcordanceQueryRequest() {
+		return this.filterConcordanceQueryRequest;
 	}
 
 	public FrequencyQueryRequest getFrequencyQueryRequest() {
@@ -106,6 +112,10 @@ public class QueryRequest {
 
 	public void setEnd(Integer end) {
 		this.end = end;
+	}
+
+	public void setFilterConcordanceQueryRequest(FilterConcordanceQueryRequest filterConcordanceQueryRequest) {
+		this.filterConcordanceQueryRequest = filterConcordanceQueryRequest;
 	}
 
 	public void setFrequencyQueryRequest(FrequencyQueryRequest frequencyQueryRequest) {

@@ -180,6 +180,7 @@ public class WrapperCaller {
 					"-j", "\"" + StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))) + "\"");
 			this.logger.debug(paramsEscaped.stream().collect(Collectors.joining(" ")));
 		} else {
+			this.logger.debug("Query: {}", StringEscapeUtils.escapeJson(Json.stringify(Json.toJson(queryRequest))));
 			params = Arrays.asList(this.javaExecutable, "-jar", this.wrapperPath, "-l", this.manateeLibPath, "-c",
 					queryRequest.getCorpus(), "-d", this.cacheDir, "-j", Json.stringify(Json.toJson(queryRequest)));
 		}

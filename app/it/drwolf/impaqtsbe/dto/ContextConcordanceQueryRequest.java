@@ -1,40 +1,16 @@
 package it.drwolf.impaqtsbe.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ContextConcordanceQueryRequest {
-	private String window;
-	private int token;
-	private String lemma;
-	private String item;
+	private List<ContextConcordanceItem> items = new ArrayList<>();
 
-	public String getItem() {
-		return this.item;
+	public List<ContextConcordanceItem> getItems() {
+		return items;
 	}
 
-	public String getLemma() {
-		return this.lemma;
-	}
-
-	public int getToken() {
-		return this.token;
-	}
-
-	public String getWindow() {
-		return this.window;
-	}
-
-	public void setItem(String item) {
-		this.item = item;
-	}
-
-	public void setLemma(String lemma) {
-		this.lemma = lemma;
-	}
-
-	public void setToken(int token) {
-		this.token = token;
-	}
-
-	public void setWindow(String window) {
-		this.window = window;
+	public void setItems(List<ContextConcordanceItem> items) {
+		this.items = items;
 	}
 }

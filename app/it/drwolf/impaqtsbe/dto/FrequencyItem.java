@@ -4,58 +4,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FrequencyItem {
-    private String head;
-    private int total;
-    private long totalFreq;
-    private long maxFreq;
-    private float maxRel;
-    private List<FrequencyResultLine> items = new ArrayList<>();
+	private String head;
+	private int total;
+	private long totalFreq;
+	private long maxFreq;
+	private float maxRel;
+	private String operation;
+	private List<FrequencyResultLine> items = new ArrayList<>();
 
-    public float getMaxRel() {
-        return this.maxRel;
-    }
+	public String getHead() {
+		return this.head;
+	}
 
-    public void setMaxRel(float maxRel) {
-        this.maxRel = maxRel;
-    }
+	public List<FrequencyResultLine> getItems() {
+		return this.items;
+	}
 
-    public long getMaxFreq() {
-        return this.maxFreq;
-    }
+	public long getMaxFreq() {
+		return this.maxFreq;
+	}
 
-    public void setMaxFreq(long maxFreq) {
-        this.maxFreq = maxFreq;
-    }
+	public float getMaxRel() {
+		return this.maxRel;
+	}
 
-    public String getHead() {
-        return this.head;
-    }
+	public String getOperation() {
+		return this.operation;
+	}
 
-    public void setHead(String head) {
-        this.head = head;
-    }
+	public int getTotal() {
+		return this.total;
+	}
 
-    public List<FrequencyResultLine> getItems() {
-        return this.items;
-    }
+	public long getTotalFreq() {
+		return this.totalFreq;
+	}
 
-    public void setItems(List<FrequencyResultLine> items) {
-        this.items = items;
-    }
+	public void setHead(String head) {
+		this.head = head;
+	}
 
-    public int getTotal() {
-        return this.total;
-    }
+	public void setItems(List<FrequencyResultLine> items) {
+		this.items = items;
+	}
 
-    public void setTotal(int total) {
-        this.total = total;
-    }
+	public void setMaxFreq(long maxFreq) {
+		this.maxFreq = maxFreq;
+	}
 
-    public long getTotalFreq() {
-        return this.totalFreq;
-    }
+	public void setMaxRel(float maxRel) {
+		this.maxRel = maxRel;
+	}
 
-    public void setTotalFreq(long totalFreq) {
-        this.totalFreq = totalFreq;
-    }
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+
+	public void setTotalFreq(long totalFreq) {
+		this.totalFreq = totalFreq;
+	}
 }

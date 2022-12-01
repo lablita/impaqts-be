@@ -1,0 +1,25 @@
+{
+  "name": "impaqts-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "sonar": "./sbt/bin/sbt compile && sonar-scanner"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/drwolf/impaqts-be.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/drwolf/impaqts-be/issues"
+  },
+  "homepage": "https://bitbucket.org/drwolf/impaqts-be#readme",
+  "devDependencies": {
+    "sonarqube-scanner": "^2.1.2"
+  }
+}

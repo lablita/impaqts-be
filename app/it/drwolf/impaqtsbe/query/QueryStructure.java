@@ -18,37 +18,37 @@ public class QueryStructure extends QueryElement {
 
 	@JsonIgnore
 	public String getCql(String cqlTokenPattern) {
-		String cql = cqlTokenPattern;
-		if (cql == null) {
-			cql = "";
+		StringBuilder cql = new StringBuilder();
+		if (cqlTokenPattern != null) {
+			cql = new StringBuilder(cqlTokenPattern);
 		}
 		if (!this.getTags().isEmpty()) {
 			boolean first = true;
 			for (List<QueryTag> andList : this.getTags()) {
 				if (!first) {
-					cql += ")";
+					cql.append(")");
 				}
 				if (first && cqlTokenPattern == null) {
-					cql += " (";
+					cql.append(" (");
 				} else {
-					cql += " within (";
+					cql.append(" within (");
 				}
 				for (QueryTag orEl : andList) {
-					cql += "< " + orEl.getCql() + "/> | ";
+					cql.append("< ").append(orEl.getCql()).append("/> | ");
 				}
-				cql = cql.substring(0, cql.length() - 3) + ")";
+				cql = new StringBuilder(cql.substring(0, cql.length() - 3) + ")");
 				first = false;
 			}
 		}
-		long count_cp = cql.chars().filter(ch -> ch == ')').count();
-		long count_op = cql.chars().filter(ch -> ch == '(').count();
-		long diff = count_cp - count_op;
+		long countCp = cql.chars().filter(ch -> ch == ')').count();
+		long countOp = cql.chars().filter(ch -> ch == '(').count();
+		long diff = countCp - countOp;
 		if (diff > 0) {
 			for (long i = 0; i < diff; i++) {
-				cql = "(" + cql;
+				cql = new StringBuilder("(" + cql);
 			}
 		}
-		return cql;
+		return cql.toString();
 	}
 
 }

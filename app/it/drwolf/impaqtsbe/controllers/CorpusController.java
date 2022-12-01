@@ -1,9 +1,12 @@
 package it.drwolf.impaqtsbe.controllers;
 
+import it.drwolf.impaqtsbe.dto.QueryRequest;
+import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.startup.Startup;
+import it.drwolf.impaqtsbe.utils.WrapperCaller;
 import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -13,13 +16,14 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class CorpusController extends Controller {
 
-	private static final String APPLICATION_GZIP = "application/gzip";
+	public static final String EXISTS_BUT_IS_NOT_A_FOLDER = "%s exists but is not a folder.";
 	private static final String APPLICATION_ZIP = "application/zip";
 	private final Startup startup;
 
@@ -36,7 +40,7 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!corpusFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", corpusName);
+			final String notAFolderMessage = String.format(CorpusController.EXISTS_BUT_IS_NOT_A_FOLDER, corpusName);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable
@@ -73,12 +77,55 @@ public class CorpusController extends Controller {
 		return Results.noContent();
 	}
 
-	private void extractZIPCorpus(Path compressedCorpus) throws ZipException {
-		new ZipFile(compressedCorpus.toString()).extractAll(compressedCorpus.getParent().toString());
+	private void extractZIPCorpus(Path compressedCorpus) throws IOException {
+		try (ZipFile zipFile = new ZipFile(compressedCorpus.toString())) {
+			zipFile.extractAll(compressedCorpus.getParent().toString());
+		}
+	}
+
+	public Result getCorpusInfo(String corpusName) {
+		QueryRequest qr = new QueryRequest();
+		qr.setCorpus(corpusName);
+		qr.setQueryType("CORPUS_INFO");
+		QueryResponse queryResponse = null;
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
+		try {
+			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+		} catch (IOException e) {
+			final String corpusInfoErrorMessage = String.format("Error while retrieving info for corpus %s",
+					corpusName);
+			return Results.internalServerError(corpusInfoErrorMessage);
+		}
+		return Results.ok(Json.toJson(queryResponse));
+	}
+
+	public Result getWideContext(String corpusName, Long pos, Integer hitlen) {
+		QueryRequest qr = new QueryRequest();
+		qr.getWideContextRequest().setCorpusName(corpusName);
+		qr.getWideContextRequest().setPos(pos);
+		qr.getWideContextRequest().setHitlen(hitlen);
+		qr.setCorpus(corpusName);
+		qr.setQueryType("WIDE_CONTEXT_QUERY_REQUEST");
+		QueryResponse queryResponse = null;
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
+		try {
+			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+		} catch (IOException e) {
+			final String wideContextRetrievalErrorMessage = String.format("Error while retrieving context %s %d %d",
+					corpusName, pos, hitlen);
+			return Results.internalServerError(wideContextRetrievalErrorMessage);
+		}
+		return Results.ok(Json.toJson(queryResponse));
 	}
 
 	public Result uploadCorpus(Http.Request request) {
-		final String corporaFolderPath = startup.getCorporaFolderPath();
+		final String corporaFolderPath = this.startup.getCorporaFolderPath();
 		File corpusContainerFolder = new File(corporaFolderPath);
 		if (!corpusContainerFolder.exists()) {
 			// try to create folder
@@ -90,7 +137,8 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!corpusContainerFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", corporaFolderPath);
+			final String notAFolderMessage = String.format(CorpusController.EXISTS_BUT_IS_NOT_A_FOLDER,
+					corporaFolderPath);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable
@@ -121,17 +169,16 @@ public class CorpusController extends Controller {
 			return Results.internalServerError(contentTypeNotRetrievedMessage);
 		}
 		String contentType = urlConnection.getContentType();
-		String extractedCorpusFolder = null;
 		if (contentType != null) {
 			try {
-				if (APPLICATION_ZIP.equals(contentType)) {
+				if (CorpusController.APPLICATION_ZIP.equals(contentType)) {
 					this.extractZIPCorpus(compressedCorpus);
 				} else {
 					final String contentTypeNotSupported = String.format("%s content type is not supported.",
 							compressedCorpus);
 					return Results.badRequest(contentTypeNotSupported);
 				}
-			} catch (ZipException e) {
+			} catch (IOException e) {
 				final String errorExtractingDataMessage = String.format("Error while extracting compressed file %s.",
 						compressedCorpus);
 				return Results.badRequest(errorExtractingDataMessage);
@@ -141,13 +188,20 @@ public class CorpusController extends Controller {
 					compressedCorpus);
 			return Results.internalServerError(contentTypeNotRetrievedMessage);
 		}
-		compressedCorpus.toFile().delete();
+		try {
+			Files.deleteIfExists(compressedCorpus);
+		} catch (IOException e) {
+			final String compressedCorpusNotDeletable = String.format(
+					"Cannot delete compressed corpus after upload: %s.", compressedCorpus);
+			return Results.internalServerError(compressedCorpusNotDeletable);
+		}
+
 		final String okMessage = String.format(this.startup.getCorporaFolderPath());
 		return Results.ok(okMessage);
 	}
 
 	public Result uploadRegistry(Http.Request request) {
-		final String registryFolderPath = startup.getManateeRegistryPath();
+		final String registryFolderPath = this.startup.getManateeRegistryPath();
 		File registryContainerFolder = new File(registryFolderPath);
 		if (!registryContainerFolder.exists()) {
 			// try to create folder
@@ -160,7 +214,8 @@ public class CorpusController extends Controller {
 		}
 		// file exists: check if it's a folder
 		if (!registryContainerFolder.isDirectory()) {
-			final String notAFolderMessage = String.format("%s exists but is not a folder.", registryContainerFolder);
+			final String notAFolderMessage = String.format(CorpusController.EXISTS_BUT_IS_NOT_A_FOLDER,
+					registryContainerFolder);
 			return Results.internalServerError(notAFolderMessage);
 		}
 		// folder exists: check if it's writable

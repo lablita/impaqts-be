@@ -14,19 +14,19 @@ public class QueryRequest {
 	private SortQueryRequest sortQueryRequest;
 	private ContextConcordanceQueryRequest contextConcordanceQueryRequest;
 	private FrequencyQueryRequest frequencyQueryRequest;
-
-	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
-		return concordanceFromCollocationParameters;
-	}
-
-	public void setConcordanceFromCollocationParameters(ConcordanceFromCollocationParameters concordanceFromCollocationParameters) {
-		this.concordanceFromCollocationParameters = concordanceFromCollocationParameters;
-	}
-
+	private WideContextRequest wideContextRequest = new WideContextRequest();
 	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
+
+	private FilterConcordanceQueryRequest filterConcordanceQueryRequest;
+
+	private String queryType;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
+	}
+
+	public ConcordanceFromCollocationParameters getConcordanceFromCollocationParameters() {
+		return this.concordanceFromCollocationParameters;
 	}
 
 	public ContextConcordanceQueryRequest getContextConcordanceQueryRequest() {
@@ -49,6 +49,10 @@ public class QueryRequest {
 		return this.end;
 	}
 
+	public FilterConcordanceQueryRequest getFilterConcordanceQueryRequest() {
+		return this.filterConcordanceQueryRequest;
+	}
+
 	public FrequencyQueryRequest getFrequencyQueryRequest() {
 		return this.frequencyQueryRequest;
 	}
@@ -61,6 +65,10 @@ public class QueryRequest {
 		return this.queryPattern;
 	}
 
+	public String getQueryType() {
+		return this.queryType;
+	}
+
 	public SortQueryRequest getSortQueryRequest() {
 		return this.sortQueryRequest;
 	}
@@ -69,12 +77,21 @@ public class QueryRequest {
 		return this.start;
 	}
 
+	public WideContextRequest getWideContextRequest() {
+		return this.wideContextRequest;
+	}
+
 	public boolean isQueryInCql() {
 		return this.queryInCql;
 	}
 
 	public void setCollocationQueryRequest(CollocationQueryRequest collocationQueryRequest) {
 		this.collocationQueryRequest = collocationQueryRequest;
+	}
+
+	public void setConcordanceFromCollocationParameters(
+			ConcordanceFromCollocationParameters concordanceFromCollocationParameters) {
+		this.concordanceFromCollocationParameters = concordanceFromCollocationParameters;
 	}
 
 	public void setContextConcordanceQueryRequest(ContextConcordanceQueryRequest contextConcordanceQueryRequest) {
@@ -97,6 +114,10 @@ public class QueryRequest {
 		this.end = end;
 	}
 
+	public void setFilterConcordanceQueryRequest(FilterConcordanceQueryRequest filterConcordanceQueryRequest) {
+		this.filterConcordanceQueryRequest = filterConcordanceQueryRequest;
+	}
+
 	public void setFrequencyQueryRequest(FrequencyQueryRequest frequencyQueryRequest) {
 		this.frequencyQueryRequest = frequencyQueryRequest;
 	}
@@ -109,11 +130,19 @@ public class QueryRequest {
 		this.queryPattern = queryPattern;
 	}
 
+	public void setQueryType(String queryType) {
+		this.queryType = queryType;
+	}
+
 	public void setSortQueryRequest(SortQueryRequest sortQueryRequest) {
 		this.sortQueryRequest = sortQueryRequest;
 	}
 
 	public void setStart(Integer start) {
 		this.start = start;
+	}
+
+	public void setWideContextRequest(WideContextRequest wideContextRequest) {
+		this.wideContextRequest = wideContextRequest;
 	}
 }

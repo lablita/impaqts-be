@@ -1,11 +1,17 @@
 package it.drwolf.impaqtsbe.controllers;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import it.drwolf.impaqtsbe.actors.CorpusUnzipperActor;
+import it.drwolf.impaqtsbe.actors.messages.CorpusUnzipperMessage;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.startup.Startup;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
-import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -15,21 +21,46 @@ import play.mvc.Results;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CorpusController extends Controller {
-
 	public static final String EXISTS_BUT_IS_NOT_A_FOLDER = "%s exists but is not a folder.";
-	private static final String APPLICATION_ZIP = "application/zip";
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final Startup startup;
+	private final ActorRef unzipperActor;
 
 	@Inject
-	public CorpusController(Startup startup) {
+	public CorpusController(Startup startup, ActorSystem actorSystem) {
 		this.startup = startup;
+		this.unzipperActor = actorSystem.actorOf(CorpusUnzipperActor.getProps());
+	}
+
+	public Result corpusUploadStatus(final String uuid) {
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		Path tmp = FileSystems.getDefault().getPath(tmpDir, uuid + ".session");
+		File tmpFile = tmp.toFile();
+		if (!tmpFile.exists()) {
+			return Results.notFound(String.format("Il file di stato non esiste: %s", uuid));
+		}
+		if (!tmpFile.canRead()) {
+			return Results.notFound(String.format("Il file di stato non è leggibile: %s", uuid));
+		}
+		try {
+			List<String> lines = Files.readAllLines(tmp, StandardCharsets.UTF_8);
+			String output = lines.stream().collect(Collectors.joining("\n"));
+			return Results.ok(output);
+		} catch (IOException e) {
+			final String readError = String.format("Error reading file %s", uuid);
+			this.logger.error(readError);
+			return Results.internalServerError(readError);
+		}
 	}
 
 	public Result deleteCorpus(String corpusName) {
@@ -77,12 +108,6 @@ public class CorpusController extends Controller {
 		return Results.noContent();
 	}
 
-	private void extractZIPCorpus(Path compressedCorpus) throws IOException {
-		try (ZipFile zipFile = new ZipFile(compressedCorpus.toString())) {
-			zipFile.extractAll(compressedCorpus.getParent().toString());
-		}
-	}
-
 	public Result getCorpusInfo(String corpusName) {
 		QueryRequest qr = new QueryRequest();
 		qr.setCorpus(corpusName);
@@ -125,79 +150,24 @@ public class CorpusController extends Controller {
 	}
 
 	public Result uploadCorpus(Http.Request request) {
-		final String corporaFolderPath = this.startup.getCorporaFolderPath();
-		File corpusContainerFolder = new File(corporaFolderPath);
-		if (!corpusContainerFolder.exists()) {
-			// try to create folder
-			boolean corpusContainerFolderCreated = corpusContainerFolder.mkdirs();
-			if (!corpusContainerFolderCreated) {
-				final String folderNotCreatedMessage = String.format("Unable to create %s folder.", corporaFolderPath);
-				return Results.internalServerError(folderNotCreatedMessage);
-			}
-		}
-		// file exists: check if it's a folder
-		if (!corpusContainerFolder.isDirectory()) {
-			final String notAFolderMessage = String.format(CorpusController.EXISTS_BUT_IS_NOT_A_FOLDER,
-					corporaFolderPath);
-			return Results.internalServerError(notAFolderMessage);
-		}
-		// folder exists: check if it's writable
-		if (!corpusContainerFolder.canRead() || !corpusContainerFolder.canWrite()) {
-			final String notWritableFolderMessage = String.format("Cannot write into %s.", corporaFolderPath);
-			return Results.internalServerError(notWritableFolderMessage);
-		}
+		final UUID uploadSessionUUID = UUID.randomUUID();
 		Http.MultipartFormData<play.libs.Files.TemporaryFile> compressedCorpusMultipartFormData = request.body()
 				.asMultipartFormData();
 		List<Http.MultipartFormData.FilePart<play.libs.Files.TemporaryFile>> compressedCorpusFileParts = compressedCorpusMultipartFormData.getFiles();
-		if (compressedCorpusFileParts == null || compressedCorpusFileParts.isEmpty()) {
-			final String noFileUploadedMessage = "No file has been uploaded.";
-			return Results.badRequest(noFileUploadedMessage);
-		}
-		Http.MultipartFormData.FilePart<play.libs.Files.TemporaryFile> compressedCorpusFilePart = compressedCorpusFileParts.get(
-				0);
-		String fileName = compressedCorpusFilePart.getFilename();
-		play.libs.Files.TemporaryFile tempCompressedCorpus = compressedCorpusFilePart.getRef();
-		// never overwrite, use deleteCorpus instead
-		Path compressedCorpus = tempCompressedCorpus.copyTo(
-				Paths.get(corpusContainerFolder.getAbsolutePath(), fileName), false);
-		URLConnection urlConnection = null;
+		// file has arrived
+		final CorpusUnzipperMessage message = new CorpusUnzipperMessage();
+		message.setSessionUUID(uploadSessionUUID);
+		message.setCorporaFolderPath(this.startup.getCorporaFolderPath());
+		message.setCompressedCorpusFileParts(compressedCorpusFileParts);
 		try {
-			urlConnection = compressedCorpus.toFile().toURI().toURL().openConnection();
+			Path sessionFile = Files.createTempFile(message.getSessionUUID().toString(), ".session");
+			message.setSessionFile(sessionFile);
+			this.unzipperActor.tell(message, null);
+			return Results.ok(FilenameUtils.getBaseName(sessionFile.getFileName().toString()));
 		} catch (IOException e) {
-			final String contentTypeNotRetrievedMessage = String.format("Cannot retrieve content type of %s.",
-					compressedCorpus);
-			return Results.internalServerError(contentTypeNotRetrievedMessage);
+			String sessionFileError = "Errore nella creazione del file di sessione";
+			return Results.internalServerError(sessionFileError);
 		}
-		String contentType = urlConnection.getContentType();
-		if (contentType != null) {
-			try {
-				if (CorpusController.APPLICATION_ZIP.equals(contentType)) {
-					this.extractZIPCorpus(compressedCorpus);
-				} else {
-					final String contentTypeNotSupported = String.format("%s content type is not supported.",
-							compressedCorpus);
-					return Results.badRequest(contentTypeNotSupported);
-				}
-			} catch (IOException e) {
-				final String errorExtractingDataMessage = String.format("Error while extracting compressed file %s.",
-						compressedCorpus);
-				return Results.badRequest(errorExtractingDataMessage);
-			}
-		} else {
-			final String contentTypeNotRetrievedMessage = String.format("Cannot retrieve content type of %s.",
-					compressedCorpus);
-			return Results.internalServerError(contentTypeNotRetrievedMessage);
-		}
-		try {
-			Files.deleteIfExists(compressedCorpus);
-		} catch (IOException e) {
-			final String compressedCorpusNotDeletable = String.format(
-					"Cannot delete compressed corpus after upload: %s.", compressedCorpus);
-			return Results.internalServerError(compressedCorpusNotDeletable);
-		}
-
-		final String okMessage = String.format(this.startup.getCorporaFolderPath());
-		return Results.ok(okMessage);
 	}
 
 	public Result uploadRegistry(Http.Request request) {

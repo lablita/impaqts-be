@@ -8,6 +8,7 @@ import java.util.List;
 public class QueryResponse {
 	private final List<DescResponse> descResponses = new ArrayList<>();
 	private final CorpusInfo corpusInfo = new CorpusInfo();
+	private String id; // uuid
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
 	private FrequencyItem frequency = new FrequencyItem();
@@ -16,6 +17,9 @@ public class QueryResponse {
 	private List<String> metadataValues = new ArrayList<>();
 	private WideContextResponse wideContextResponse = new WideContextResponse();
 	private ErrorResponse errorResponse;
+	public QueryResponse(String id) {
+		this.id = id;
+	}
 
 	public List<CollocationItem> getCollocations() {
 		return this.collocations;
@@ -39,6 +43,10 @@ public class QueryResponse {
 
 	public FrequencyItem getFrequency() {
 		return frequency;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public Boolean getInProgress() {
@@ -71,6 +79,10 @@ public class QueryResponse {
 
 	public void setFrequency(FrequencyItem frequency) {
 		this.frequency = frequency;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public void setInProgress(Boolean inProgress) {

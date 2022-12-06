@@ -72,7 +72,7 @@ public class ExternalProcessActor extends AbstractActor {
 			if (canUserExecuteQuery) {
 				this.wrapperCaller.executeQuery(queryRequest);
 			} else {
-				QueryResponse qrError = new QueryResponse();
+				QueryResponse qrError = new QueryResponse(queryRequest.getId());
 				ErrorResponse er = new ErrorResponse();
 				er.setErrorCode(Http.Status.FORBIDDEN);
 				er.setErrorMessage("Non hai il permesso di eseguire questo tipo di richiesta.");

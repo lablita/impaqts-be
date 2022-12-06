@@ -142,7 +142,7 @@ public class WrapperCaller {
 				try {
 					lineJson = Json.parse(line);
 				} catch (RuntimeException re) {
-					QueryResponse qrError = new QueryResponse();
+					QueryResponse qrError = new QueryResponse(queryRequest.getId());
 					ErrorResponse er = new ErrorResponse();
 					er.setErrorCode(Http.Status.INTERNAL_SERVER_ERROR);
 					er.setErrorMessage(String.format("%s Parse error line %s", ERROR_PREFIX, line));

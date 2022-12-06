@@ -17,6 +17,10 @@ public class QueryResponse {
 	private List<String> metadataValues = new ArrayList<>();
 	private WideContextResponse wideContextResponse = new WideContextResponse();
 	private ErrorResponse errorResponse;
+
+	public QueryResponse() {
+	}
+
 	public QueryResponse(String id) {
 		this.id = id;
 	}

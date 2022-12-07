@@ -8,6 +8,8 @@ import java.util.List;
 public class QueryResponse {
 	private final List<DescResponse> descResponses = new ArrayList<>();
 	private final CorpusInfo corpusInfo = new CorpusInfo();
+	private Integer start = 0;
+	private Integer end = 0;
 	private String id; // uuid
 	private List<KWICLine> kwicLines = new ArrayList<>();
 	private List<CollocationItem> collocations = new ArrayList<>();
@@ -17,10 +19,8 @@ public class QueryResponse {
 	private List<String> metadataValues = new ArrayList<>();
 	private WideContextResponse wideContextResponse = new WideContextResponse();
 	private ErrorResponse errorResponse;
-
 	public QueryResponse() {
 	}
-
 	public QueryResponse(String id) {
 		this.id = id;
 	}
@@ -39,6 +39,10 @@ public class QueryResponse {
 
 	public List<DescResponse> getDescResponses() {
 		return this.descResponses;
+	}
+
+	public Integer getEnd() {
+		return end;
 	}
 
 	public ErrorResponse getErrorResponse() {
@@ -65,6 +69,10 @@ public class QueryResponse {
 		return this.metadataValues;
 	}
 
+	public Integer getStart() {
+		return start;
+	}
+
 	public WideContextResponse getWideContextResponse() {
 		return wideContextResponse;
 	}
@@ -75,6 +83,10 @@ public class QueryResponse {
 
 	public void setCurrentSize(Integer currentSize) {
 		this.currentSize = currentSize;
+	}
+
+	public void setEnd(Integer end) {
+		this.end = end;
 	}
 
 	public void setErrorResponse(ErrorResponse errorResponse) {
@@ -99,6 +111,10 @@ public class QueryResponse {
 
 	public void setMetadataValues(List<String> metadataValues) {
 		this.metadataValues = metadataValues;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
 	}
 
 	public void setWideContextResponse(WideContextResponse wideContextResponse) {

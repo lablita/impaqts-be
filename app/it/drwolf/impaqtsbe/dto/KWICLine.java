@@ -9,6 +9,7 @@ public class KWICLine {
 	private String kwic;
 	private List<String> rightContext;
 	private Long pos;
+	private String startTime;
 
 	public KWICLine(String ref, List<String> leftContext, String kwic, List<String> rightContext) {
 		this.ref = ref;
@@ -51,6 +52,10 @@ public class KWICLine {
 		return this.rightContext;
 	}
 
+	public String getStartTime() {
+		return startTime;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.getRef(), this.getLeftContext(), this.getKwic(), this.getRightContext());
@@ -74,5 +79,9 @@ public class KWICLine {
 
 	public void setRightContext(List<String> rightContext) {
 		this.rightContext = rightContext;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
 	}
 }

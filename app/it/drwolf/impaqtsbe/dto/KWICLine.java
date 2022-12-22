@@ -10,6 +10,7 @@ public class KWICLine {
 	private List<String> rightContext;
 	private Long pos;
 	private String startTime;
+	private String videoUrl;
 
 	public KWICLine(String ref, List<String> leftContext, String kwic, List<String> rightContext) {
 		this.ref = ref;
@@ -56,6 +57,10 @@ public class KWICLine {
 		return startTime;
 	}
 
+	public String getVideoUrl() {
+		return videoUrl;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.getRef(), this.getLeftContext(), this.getKwic(), this.getRightContext());
@@ -83,5 +88,9 @@ public class KWICLine {
 
 	public void setStartTime(String startTime) {
 		this.startTime = startTime;
+	}
+
+	public void setVideoUrl(String videoUrl) {
+		this.videoUrl = videoUrl;
 	}
 }

@@ -57,7 +57,7 @@ public class QueryRequest {
 	}
 
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public boolean getQueryInCql() {
@@ -151,5 +151,18 @@ public class QueryRequest {
 
 	public void setWideContextRequest(WideContextRequest wideContextRequest) {
 		this.wideContextRequest = wideContextRequest;
+	}
+
+	public enum RequestType {
+		VISUAL_QUERY_REQUEST, TEXTUAL_QUERY_REQUEST, CONTEXT_QUERY_REQUEST, COLLOCATION_REQUEST, SORT_REQUEST, MULTI_FREQUENCY_QUERY_REQUEST, METADATA_FREQUENCY_QUERY_REQUEST, PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST, PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST, WIDE_CONTEXT_QUERY_REQUEST, CORPUS_INFO, FILTER_CONCORDANCE_QUERY_REQUEST;
+
+		public static boolean contain(String dir) {
+			try {
+				RequestType.valueOf(dir);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
 	}
 }

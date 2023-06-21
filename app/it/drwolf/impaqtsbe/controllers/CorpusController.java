@@ -2,6 +2,7 @@ package it.drwolf.impaqtsbe.controllers;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import com.fasterxml.jackson.databind.JsonNode;
 import it.drwolf.impaqtsbe.actors.CorpusUnzipperActor;
 import it.drwolf.impaqtsbe.actors.messages.CorpusUnzipperMessage;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
@@ -20,12 +21,15 @@ import play.mvc.Results;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,6 +39,8 @@ public class CorpusController extends Controller {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final Startup startup;
 	private final ActorRef unzipperActor;
+
+	private static final FREQUENCY =
 
 	@Inject
 	public CorpusController(Startup startup, ActorSystem actorSystem) {
@@ -106,6 +112,61 @@ public class CorpusController extends Controller {
 			return Results.internalServerError(errorDeletingMessage);
 		}
 		return Results.noContent();
+	}
+
+	public Result downloadFileByUuid(String uuid) {
+
+		//JsonNode bodyAsJson = request.body().asJson();
+		//QueryRequest queryRequest = Json.fromJson(bodyAsJson, QueryRequest.class);
+		/*final List<User> all = this.userDAO.getAll(em);
+
+		final UsersXlsExporter ue = new UsersXlsExporter();
+		ue.addRows(all);
+		final byte[] rtn = ue.export();*/
+		//Charset charset = Charset.forName("ASCII");
+		String test = "ciao";
+
+		final byte[] rtn = test.getBytes();
+
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		final String filename = uuid + "_" + sdf.format(new Date()) + ".csv";
+		return Results.ok(rtn)
+				.withHeader("Content-disposition", "attachment; filename=" + filename)
+				.withHeader("Download-Filename", filename)
+				.withHeader("Set-Cookie", "fileDownload=true; path=/");
+	}
+
+	public Result exportCsv(Http.Request request) throws IOException {
+
+		JsonNode bodyAsJson = request.body().asJson();
+		QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
+
+		UUID uuid = UUID.randomUUID();
+		//final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//final String filename = type + "_" + sdf.format(new Date()) + ".csv";
+
+		final String filename = uuid + ".csv";
+
+		Path path = Paths.get("/home/drwolf/temp");
+		if (!Files.exists(path)) {
+			Files.createDirectories(path);
+		}
+		FileWriter myWriter = new FileWriter(path.toFile().getPath() + "/" + filename);
+
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
+
+		QueryResponse queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+		StringBuilder res = new StringBuilder();
+		queryResponse.getFrequency()
+
+		myWriter.write("Files in Java might be tricky, but it is fun enough!");
+		myWriter.close();
+
+		return Results.ok(Json.toJson(uuid));
 	}
 
 	public Result getCorpusInfo(String corpusName) {

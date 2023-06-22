@@ -7,6 +7,7 @@ import it.drwolf.impaqtsbe.actors.CorpusUnzipperActor;
 import it.drwolf.impaqtsbe.actors.messages.CorpusUnzipperMessage;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.dto.QueryResponse;
+import it.drwolf.impaqtsbe.services.ExportCsvService;
 import it.drwolf.impaqtsbe.startup.Startup;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
 import org.apache.commons.io.FileUtils;
@@ -21,7 +22,6 @@ import play.mvc.Results;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -36,16 +36,18 @@ import java.util.stream.Collectors;
 
 public class CorpusController extends Controller {
 	public static final String EXISTS_BUT_IS_NOT_A_FOLDER = "%s exists but is not a folder.";
+	static final String TEMP_CSV_PATH = "/home/drwolf/temp";
+	static final String CSV_EXT = ".csv";
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final Startup startup;
 	private final ActorRef unzipperActor;
-
-	private static final FREQUENCY =
+	private ExportCsvService exportCsvService;
 
 	@Inject
-	public CorpusController(Startup startup, ActorSystem actorSystem) {
+	public CorpusController(Startup startup, ActorSystem actorSystem, ExportCsvService exportCsvService) {
 		this.startup = startup;
 		this.unzipperActor = actorSystem.actorOf(CorpusUnzipperActor.getProps());
+		this.exportCsvService = exportCsvService;
 	}
 
 	public Result corpusUploadStatus(final String uuid) {
@@ -114,26 +116,22 @@ public class CorpusController extends Controller {
 		return Results.noContent();
 	}
 
-	public Result downloadFileByUuid(String uuid) {
-
-		//JsonNode bodyAsJson = request.body().asJson();
-		//QueryRequest queryRequest = Json.fromJson(bodyAsJson, QueryRequest.class);
-		/*final List<User> all = this.userDAO.getAll(em);
-
-		final UsersXlsExporter ue = new UsersXlsExporter();
-		ue.addRows(all);
-		final byte[] rtn = ue.export();*/
-		//Charset charset = Charset.forName("ASCII");
-		String test = "ciao";
-
-		final byte[] rtn = test.getBytes();
+	public Result downloadFileByUuid(String filename, String uuid) {
+		final String csvFilename = uuid + CorpusController.CSV_EXT;
+		Path path = Paths.get(CorpusController.TEMP_CSV_PATH);
+		final String filePathStr = path.toFile().getPath() + "/" + csvFilename;
 
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		final String filename = uuid + "_" + sdf.format(new Date()) + ".csv";
-		return Results.ok(rtn)
-				.withHeader("Content-disposition", "attachment; filename=" + filename)
-				.withHeader("Download-Filename", filename)
+		final String fn = filename + "_" + sdf.format(new Date()) + ".csv";
+		/*return Results.ok(rtn)
+				.withHeader("Content-disposition", "attachment; filename=" + fn)
+				.withHeader("Download-Filename", fn)
+				.withHeader("Set-Cookie", "fileDownload=true; path=/");*/
+		return Results.ok(new File(filePathStr))
+				.withHeader("Content-Type", "application/octet-stream")
+				.withHeader("Content-disposition", "attachment; filename=" + fn)
+				.withHeader("Download-Filename", fn)
 				.withHeader("Set-Cookie", "fileDownload=true; path=/");
 	}
 
@@ -141,18 +139,14 @@ public class CorpusController extends Controller {
 
 		JsonNode bodyAsJson = request.body().asJson();
 		QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
-
 		UUID uuid = UUID.randomUUID();
-		//final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		//final String filename = type + "_" + sdf.format(new Date()) + ".csv";
+		final String filename = uuid + CorpusController.CSV_EXT;
 
-		final String filename = uuid + ".csv";
-
-		Path path = Paths.get("/home/drwolf/temp");
+		Path path = Paths.get(CorpusController.TEMP_CSV_PATH);
 		if (!Files.exists(path)) {
 			Files.createDirectories(path);
 		}
-		FileWriter myWriter = new FileWriter(path.toFile().getPath() + "/" + filename);
+		final String filePathStr = path.toFile().getPath() + "/" + filename;
 
 		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
 				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
@@ -160,11 +154,8 @@ public class CorpusController extends Controller {
 				this.startup.getDockerManateePath(), this.startup.getCacheDir());
 
 		QueryResponse queryResponse = wrapperCaller.executeNonQueryRequest(qr);
-		StringBuilder res = new StringBuilder();
-		queryResponse.getFrequency()
-
-		myWriter.write("Files in Java might be tricky, but it is fun enough!");
-		myWriter.close();
+		QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
+		this.exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
 
 		return Results.ok(Json.toJson(uuid));
 	}

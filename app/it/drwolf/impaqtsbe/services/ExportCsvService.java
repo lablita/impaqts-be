@@ -1,6 +1,7 @@
 package it.drwolf.impaqtsbe.services;
 
 import it.drwolf.impaqtsbe.dto.FrequencyResultLine;
+import it.drwolf.impaqtsbe.dto.KWICLine;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.dto.QueryResponse;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,13 +19,16 @@ public class ExportCsvService {
 	static final String REL = "rel[%]";
 	static final String ELEMENT = "Element";
 	static final String OVERALL_FREQ = "Overall frequency";
-
 	static final String WORD = "word";
 	static final String LEMMA = "lemma";
 	static final String TAG = "tag";
 
+	static final String LEFT = "Left";
+	static final String KWIC = "Kwich";
+	static final String RIGHT = "Right";
+
 	private String convertToCSV(String[] data) {
-		return Stream.of(data).map(this::escapeSpecialCharacters).collect(Collectors.joining(";"));
+		return Stream.of(data).map(this::escapeSpecialCharacters).collect(Collectors.joining(";;"));
 	}
 
 	private void elaborateMetadataFrequencyCsv(QueryResponse queryResponse, String filePathStr)
@@ -77,6 +81,28 @@ public class ExportCsvService {
 		}
 	}
 
+	private void elaborateTextualQueryRequestCsv(QueryResponse queryResponse, String filePathStr)
+			throws FileNotFoundException {
+		List<String[]> strList = new ArrayList<>();
+		String[] header = new String[] { ExportCsvService.LEFT, ExportCsvService.KWIC, ExportCsvService.RIGHT };
+		strList.add(header);
+		int i = 0;
+		for (KWICLine kwic : queryResponse.getKwicLines()) {
+			String[] line = new String[] { kwic.getLeftContext().get(0), kwic.getKwic(),
+					kwic.getRightContext().get(0) };
+			strList.add(line);
+			if (i == 105) {
+				System.out.println("");
+			}
+			i++;
+		}
+		File csvOutputFile = new File(filePathStr);
+		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+			strList.stream().map(this::convertToCSV).forEach(pw::println);
+			pw.flush();
+		}
+	}
+
 	private String escapeSpecialCharacters(String data) {
 		String escapedData = data.replaceAll("\\R", " ");
 		if (data.contains(",") || data.contains("\"") || data.contains("'")) {
@@ -95,6 +121,9 @@ public class ExportCsvService {
 			break;
 		case MULTI_FREQUENCY_QUERY_REQUEST:
 			this.elaborateMultilevelFrequencyCsv(queryResponse, filePathStr);
+			break;
+		case TEXTUAL_QUERY_REQUEST:
+			this.elaborateTextualQueryRequestCsv(queryResponse, filePathStr);
 			break;
 		default:
 			break;

@@ -135,27 +135,30 @@ public class CorpusController extends Controller {
 				.withHeader("Set-Cookie", "fileDownload=true; path=/");
 	}
 
-	public Result exportCsv(Http.Request request) throws IOException {
-
+	public Result exportCsv(Http.Request request) {
 		JsonNode bodyAsJson = request.body().asJson();
 		QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
 		UUID uuid = UUID.randomUUID();
 		final String filename = uuid + CorpusController.CSV_EXT;
 
-		Path path = Paths.get(CorpusController.TEMP_CSV_PATH);
-		if (!Files.exists(path)) {
-			Files.createDirectories(path);
+		try {
+			Path path = Paths.get(CorpusController.TEMP_CSV_PATH);
+			if (!Files.exists(path)) {
+				Files.createDirectories(path);
+			}
+			final String filePathStr = path.toFile().getPath() + "/" + filename;
+
+			WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+					this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+					this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+					this.startup.getDockerManateePath(), this.startup.getCacheDir());
+
+			QueryResponse queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+			QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
+			this.exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
+		} catch (Exception e) {
+			return Results.internalServerError("An error occurred while creating the csv file");
 		}
-		final String filePathStr = path.toFile().getPath() + "/" + filename;
-
-		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
-				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
-				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
-				this.startup.getDockerManateePath(), this.startup.getCacheDir());
-
-		QueryResponse queryResponse = wrapperCaller.executeNonQueryRequest(qr);
-		QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
-		this.exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
 
 		return Results.ok(Json.toJson(uuid));
 	}

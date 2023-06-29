@@ -22,5 +22,6 @@ GET     /corpus/upload/:uuid                            it.drwolf.impaqtsbe.cont
 GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.controllers.CorpusController.getWideContext(corpusName: String, pos: Long, hitlen: Integer)
 GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)
 
-POST    /export-csv                                     it.drwolf.impaqtsbe.controllers.CorpusController.exportCsv(request: Request)
-GET     /download/:filename/:uuid                      it.drwolf.impaqtsbe.controllers.CorpusController.downloadFileByUuid(filename: String, uuid: String)
++ nocsrf
+POST    /export-csv                                     it.drwolf.impaqtsbe.controllers.ExportController.exportCsv(request: Request)
+GET     /download/:filename/:uuid                      it.drwolf.impaqtsbe.controllers.ExportController.downloadFileByUuid(filename: String, uuid: String)

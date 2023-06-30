@@ -2,7 +2,6 @@ package it.drwolf.impaqtsbe.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
-import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.services.ExportCsvService;
 import it.drwolf.impaqtsbe.startup.Startup;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
@@ -24,14 +23,13 @@ public class ExportController {
 
     private final Startup startup;
 
-    private ExportCsvService exportCsvService;
+    private final ExportCsvService exportCsvService;
 
     @Inject
     public ExportController(Startup startup, ExportCsvService exportCsvService) {
         this.startup = startup;
         this.exportCsvService = exportCsvService;
     }
-
 
 
     public Result downloadFileByUuid(String filename, String uuid) {
@@ -66,9 +64,8 @@ public class ExportController {
                     this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
                     this.startup.getDockerManateePath(), this.startup.getCacheDir());
 
-            QueryResponse queryResponse = wrapperCaller.executeNonQueryRequest(qr);
             QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
-            this.exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
+            wrapperCaller.executeQueryAndWriteCSV(qr, exportCsvService, queryType, filePathStr);
         } catch (Exception e) {
             return Results.internalServerError("An error occurred while creating the csv file");
         }

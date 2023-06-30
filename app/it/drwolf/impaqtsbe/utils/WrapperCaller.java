@@ -18,6 +18,8 @@ import play.mvc.Http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +42,8 @@ public class WrapperCaller {
     private final String dockerManateePath;
     private final String cacheDir;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private String csvExt = "";
+    private String csvTempPath = "";
 
     public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
                          String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
@@ -53,6 +57,22 @@ public class WrapperCaller {
         this.dockerManateeRegistry = dockerManateeRegistry;
         this.dockerManateePath = dockerManateePath;
         this.cacheDir = cacheDir;
+    }
+
+    public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
+                         String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
+                         String cacheDir, String csvExt, String csvTempPath) {
+        this.out = out;
+        this.manateeRegistryPath = manateeRegistryPath;
+        this.manateeLibPath = manateeLibPath;
+        this.javaExecutable = javaExecutable;
+        this.wrapperPath = wrapperPath;
+        this.dockerSwitch = dockerSwitch;
+        this.dockerManateeRegistry = dockerManateeRegistry;
+        this.dockerManateePath = dockerManateePath;
+        this.cacheDir = cacheDir;
+        this.csvExt = csvExt;
+        this.csvTempPath = csvTempPath;
     }
 
     public QueryResponse executeNonQueryRequest(QueryRequest queryRequest) throws IOException {
@@ -105,7 +125,12 @@ public class WrapperCaller {
         return process;
     }
 
-    public void executeQueryAndWriteCSV(QueryRequest queryRequest, ExportCsvService exportCsvService, QueryRequest.RequestType queryType, String filePathStr) throws Exception {
+    public void executeQueryAndWriteCSV(QueryRequest queryRequest, ExportCsvService exportCsvService, QueryRequest.RequestType queryType, String uuid) throws Exception {
+        String tmpPathStr = this.csvTempPath + "/" + uuid;
+        Files.createDirectories(Paths.get(this.csvTempPath + "/" + uuid));
+        final String filePathStr = tmpPathStr + "/" + uuid + this.csvExt;
+        final String progressFilePathStr = tmpPathStr + "/" + "progress.txt";
+
         QueryResponse queryResponse = this.executeNonQueryRequest(queryRequest);
         Integer resultSize = queryResponse.getCurrentSize();
         Integer pageSize = queryRequest.getEnd() - queryRequest.getStart();

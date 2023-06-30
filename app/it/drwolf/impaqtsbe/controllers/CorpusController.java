@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 
 public class CorpusController extends Controller {
     public static final String EXISTS_BUT_IS_NOT_A_FOLDER = "%s exists but is not a folder.";
-    static final String TEMP_CSV_PATH = "/home/drwolf/temp";
-    static final String CSV_EXT = ".csv";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final Startup startup;
     private final ActorRef unzipperActor;

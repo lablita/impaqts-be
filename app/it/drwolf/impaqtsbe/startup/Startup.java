@@ -12,6 +12,10 @@ public class Startup {
 
     public static final String MANATEE_LIB_PATH = "manatee.lib.path";
     public static final String IMPAQTS_WRAPPER_JAR_PATH = "impaqts.wrapper.jar.path";
+    public static final String CSV_TEMP_PATH = "csv.temp.path";
+    public static final String CSV_EXT = "csv.ext";
+
+    private static final String CSV_PROGRESS_FILE = "csv.progress.file";
     private static final String MANATEE_REGISTRY_PATH = "manatee.registry.path";
     private static final String JAVA_EXECUTABLE_PATH = "java.executable.path";
     private static final String DOCKER_SWITCH = "docker.switch";
@@ -29,10 +33,17 @@ public class Startup {
     private String dockerManateePath;
     private String cacheDir;
     private String corporaFolderPath;
+    private String progressFileCsv;
+    private String csvExt;
+    private String csvTempPath;
 
     @Inject
     public Startup(Config configuration) {
         this.init(configuration);
+    }
+
+    public String getProgressFileCsv() {
+        return progressFileCsv;
     }
 
     public String getCorporaFolderPath() {
@@ -41,6 +52,14 @@ public class Startup {
 
     public String getDockerManateePath() {
         return this.dockerManateePath;
+    }
+
+    public String getCsvExt() {
+        return csvExt;
+    }
+
+    public String getCsvTempPath() {
+        return csvTempPath;
     }
 
     public String getDockerManateeRegistry() {
@@ -102,6 +121,23 @@ public class Startup {
             this.logger.error("Cache path not found. Stopping server.");
             System.exit(1);
         }
+        this.csvExt = configuration.getString(Startup.CSV_EXT);
+        if (this.csvExt == null || this.csvExt.isEmpty()) {
+            this.logger.error("CSV extension not found. Stopping server.");
+            System.exit(1);
+        }
+        this.csvTempPath = configuration.getString(Startup.CSV_TEMP_PATH);
+        if (this.csvTempPath == null || this.csvTempPath.isEmpty()) {
+            this.logger.error("CSV tem path not found. Stopping server.");
+            System.exit(1);
+        }
+        this.progressFileCsv = configuration.getString(Startup.CSV_TEMP_PATH);
+        if (this.csvTempPath == null || this.csvTempPath.isEmpty()) {
+            this.logger.error("CSV tem path not found. Stopping server.");
+            System.exit(1);
+        }
+
+
         this.dockerSwitch = configuration.getString(Startup.DOCKER_SWITCH);
         if (this.dockerSwitch == null || !this.dockerSwitch.equals("yes")) {
             File manateeRegistryDir = new File(this.manateeRegistryPath);

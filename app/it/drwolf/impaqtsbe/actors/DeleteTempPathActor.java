@@ -3,11 +3,15 @@ package it.drwolf.impaqtsbe.actors;
 import akka.actor.AbstractActor;
 import com.typesafe.config.Config;
 import it.drwolf.impaqtsbe.startup.Startup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
 
 public class DeleteTempPathActor extends AbstractActor {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private final String tempPath;
 
@@ -19,7 +23,7 @@ public class DeleteTempPathActor extends AbstractActor {
 	public Receive createReceive() {
 		return receiveBuilder().matchAny(message -> {
 			this.deleteFolder(new File(this.tempPath));
-			System.out.println("Deleted temporary path: " + this.tempPath);
+			this.logger.info("Deleted temporary path: " + this.tempPath);
 		}).build();
 	}
 

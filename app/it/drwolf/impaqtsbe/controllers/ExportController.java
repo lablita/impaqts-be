@@ -12,6 +12,8 @@ import it.drwolf.impaqtsbe.services.ExportCsvService;
 import it.drwolf.impaqtsbe.startup.Startup;
 import it.drwolf.impaqtsbe.utils.WrapperCaller;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -33,6 +35,7 @@ public class ExportController {
 	private final ExportCsvService exportCsvService;
 	private final ActorRef exportCsvActor;
 
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final Config configuration;
 
 	@Inject
@@ -99,7 +102,10 @@ public class ExportController {
 			progressStatusDTO.setStatus(data);
 			return Results.ok(Json.toJson(progressStatusDTO));
 		} catch (IOException e) {
-			progressStatusDTO.setStatus("KO");
+			//Errore dovuto al tentativo di lettura dettato dal polling del FE, mentre viene scritto il file progress.txt
+			//resituisco KK
+			progressStatusDTO.setStatus("KK");
+			this.logger.warn("Error while opening progress file");
 			return Results.ok(Json.toJson(progressStatusDTO));
 		}
 

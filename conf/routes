@@ -24,4 +24,5 @@ GET     /info/:corpusName                               it.drwolf.impaqtsbe.cont
 
 + nocsrf
 POST    /export-csv                                     it.drwolf.impaqtsbe.controllers.ExportController.exportCsv(request: Request)
-GET     /download/:filename/:uuid                      it.drwolf.impaqtsbe.controllers.ExportController.downloadFileByUuid(filename: String, uuid: String)
+GET     /download/:filename/:uuid                       it.drwolf.impaqtsbe.controllers.ExportController.downloadFileByUuid(filename: String, uuid: String)
+GET     /progress-csv/:uuid                             it.drwolf.impaqtsbe.controllers.ExportController.getProgressCsvByUUID(uuid: String)

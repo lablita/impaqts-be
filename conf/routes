@@ -21,6 +21,8 @@ GET     /corpus/upload/:uuid                            it.drwolf.impaqtsbe.cont
 
 GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.controllers.CorpusController.getWideContext(corpusName: String, pos: Long, hitlen: Integer)
 GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)
+POST    /word-list                                      t.drwolf.impaqtsbe.controllers.CorpusController.getWordList(request: Request)
+
 
 + nocsrf
 POST    /export-csv                                     it.drwolf.impaqtsbe.controllers.ExportController.exportCsv(request: Request)

@@ -21,15 +21,15 @@ public class WordListRequest {
     private ChangeOutputAttrType changeOutFirst;
     private ChangeOutputAttrType changeOutSecond;
     private ChangeOutputAttrType changeOutThird;
-    private String sortBy;
+    private String sortField;
     private String sortDir;
 
-    public String getSortBy() {
-        return sortBy;
+    public String getSortField() {
+        return sortField;
     }
 
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
     }
 
     public String getSortDir() {

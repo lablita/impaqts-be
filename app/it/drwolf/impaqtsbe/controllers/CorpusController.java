@@ -2,6 +2,7 @@ package it.drwolf.impaqtsbe.controllers;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import com.fasterxml.jackson.databind.JsonNode;
 import it.drwolf.impaqtsbe.actors.CorpusUnzipperActor;
 import it.drwolf.impaqtsbe.actors.messages.CorpusUnzipperMessage;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
@@ -123,6 +124,24 @@ public class CorpusController extends Controller {
         } catch (IOException e) {
             final String corpusInfoErrorMessage = String.format("Error while retrieving info for corpus %s",
                     corpusName);
+            return Results.internalServerError(corpusInfoErrorMessage);
+        }
+        return Results.ok(Json.toJson(queryResponse));
+    }
+
+    public Result getWordList(Http.Request request) {
+        JsonNode bodyAsJson = request.body().asJson();
+        QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
+        QueryResponse queryResponse = null;
+        WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+                this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+                this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+                this.startup.getDockerManateePath(), this.startup.getCacheDir());
+        try {
+            queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+        } catch (IOException e) {
+            final String corpusInfoErrorMessage = String.format("Error while word list for corpus %s",
+                    qr.getCorpus());
             return Results.internalServerError(corpusInfoErrorMessage);
         }
         return Results.ok(Json.toJson(queryResponse));

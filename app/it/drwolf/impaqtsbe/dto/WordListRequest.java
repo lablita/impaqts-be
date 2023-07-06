@@ -1,225 +1,242 @@
 package it.drwolf.impaqtsbe.dto;
 
 public class WordListRequest {
-	private String subCorpus;
-	private String searchAttribute;
-	private boolean useNGrams;
-	private int nGramFrom;
-	private int nGramTo;
-	private boolean hideSubNGram;
-	private String regexp;
-	private int minFreq;
-	private int maxFreq;
-	private String whiteList;
-	private String blackList;
-	private boolean nonWords;
-	private FigureType freqFigure;
-	private OutputType outputType;
-	private String kwRefCorpus;
-	private String kwRefSubCorpus;
-	private float commonWords;
+    private String subCorpus;
+    private String searchAttribute;
+    private boolean useNGrams;
+    private int nGramFrom;
+    private int nGramTo;
+    private boolean hideSubNGram;
+    private String regexp;
+    private int minFreq;
+    private int maxFreq;
+    private String whiteList;
+    private String blackList;
+    private boolean nonWords;
+    private FigureType freqFigure;
+    private OutputType outputType;
+    private String kwRefCorpus;
+    private String kwRefSubCorpus;
+    private float commonWords;
+    private ChangeOutputAttrType changeOutFirst;
+    private ChangeOutputAttrType changeOutSecond;
+    private ChangeOutputAttrType changeOutThird;
+    private String sortBy;
+    private String sortDir;
 
-	private ChangeOutputAttrType changeOutFirst;
-	private ChangeOutputAttrType changeOutSecond;
-	private ChangeOutputAttrType changeOutThird;
+    public String getSortBy() {
+        return sortBy;
+    }
 
-	public String getBlackList() {
-		return this.blackList;
-	}
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
 
-	public ChangeOutputAttrType getChangeOutFirst() {
-		return this.changeOutFirst;
-	}
+    public String getSortDir() {
+        return sortDir;
+    }
 
-	public ChangeOutputAttrType getChangeOutSecond() {
-		return this.changeOutSecond;
-	}
+    public void setSortDir(String sortDir) {
+        this.sortDir = sortDir;
+    }
 
-	public ChangeOutputAttrType getChangeOutThird() {
-		return this.changeOutThird;
-	}
+    public String getBlackList() {
+        return this.blackList;
+    }
 
-	public float getCommonWords() {
-		return this.commonWords;
-	}
+    public void setBlackList(String blackList) {
+        this.blackList = blackList;
+    }
 
-	public FigureType getFreqFigure() {
-		return this.freqFigure;
-	}
+    public ChangeOutputAttrType getChangeOutFirst() {
+        return this.changeOutFirst;
+    }
 
-	public String getKwRefCorpus() {
-		return this.kwRefCorpus;
-	}
+    public void setChangeOutFirst(ChangeOutputAttrType changeOutFirst) {
+        this.changeOutFirst = changeOutFirst;
+    }
 
-	public String getKwRefSubCorpus() {
-		return this.kwRefSubCorpus;
-	}
+    public ChangeOutputAttrType getChangeOutSecond() {
+        return this.changeOutSecond;
+    }
 
-	public int getMaxFreq() {
-		return this.maxFreq;
-	}
+    public void setChangeOutSecond(ChangeOutputAttrType changeOutSecond) {
+        this.changeOutSecond = changeOutSecond;
+    }
 
-	public int getMinFreq() {
-		return this.minFreq;
-	}
+    public ChangeOutputAttrType getChangeOutThird() {
+        return this.changeOutThird;
+    }
 
-	public OutputType getOutputType() {
-		return this.outputType;
-	}
+    public void setChangeOutThird(ChangeOutputAttrType changeOutThird) {
+        this.changeOutThird = changeOutThird;
+    }
 
-	public String getRegexp() {
-		return this.regexp;
-	}
+    public float getCommonWords() {
+        return this.commonWords;
+    }
 
-	public String getSearchAttribute() {
-		return this.searchAttribute;
-	}
+    public void setCommonWords(float commonWords) {
+        this.commonWords = commonWords;
+    }
 
-	public String getSubCorpus() {
-		return this.subCorpus;
-	}
+    public FigureType getFreqFigure() {
+        return this.freqFigure;
+    }
 
-	public String getWhiteList() {
-		return this.whiteList;
-	}
+    public void setFreqFigure(FigureType freqFigure) {
+        this.freqFigure = freqFigure;
+    }
 
-	public int getnGramFrom() {
-		return this.nGramFrom;
-	}
+    public String getKwRefCorpus() {
+        return this.kwRefCorpus;
+    }
 
-	public int getnGramTo() {
-		return this.nGramTo;
-	}
+    public void setKwRefCorpus(String kwRefCorpus) {
+        this.kwRefCorpus = kwRefCorpus;
+    }
 
-	public boolean isHideSubNGram() {
-		return this.hideSubNGram;
-	}
+    public String getKwRefSubCorpus() {
+        return this.kwRefSubCorpus;
+    }
 
-	public boolean isNonWords() {
-		return this.nonWords;
-	}
+    public void setKwRefSubCorpus(String kwRefSubCorpus) {
+        this.kwRefSubCorpus = kwRefSubCorpus;
+    }
 
-	public boolean isUseNGrams() {
-		return this.useNGrams;
-	}
+    public int getMaxFreq() {
+        return this.maxFreq;
+    }
 
-	public void setBlackList(String blackList) {
-		this.blackList = blackList;
-	}
+    public void setMaxFreq(int maxFreq) {
+        this.maxFreq = maxFreq;
+    }
 
-	public void setChangeOutFirst(ChangeOutputAttrType changeOutFirst) {
-		this.changeOutFirst = changeOutFirst;
-	}
+    public int getMinFreq() {
+        return this.minFreq;
+    }
 
-	public void setChangeOutSecond(ChangeOutputAttrType changeOutSecond) {
-		this.changeOutSecond = changeOutSecond;
-	}
+    public void setMinFreq(int minFreq) {
+        this.minFreq = minFreq;
+    }
 
-	public void setChangeOutThird(ChangeOutputAttrType changeOutThird) {
-		this.changeOutThird = changeOutThird;
-	}
+    public OutputType getOutputType() {
+        return this.outputType;
+    }
 
-	public void setCommonWords(float commonWords) {
-		this.commonWords = commonWords;
-	}
+    public void setOutputType(OutputType outputType) {
+        this.outputType = outputType;
+    }
 
-	public void setFreqFigure(FigureType freqFigure) {
-		this.freqFigure = freqFigure;
-	}
+    public String getRegexp() {
+        return this.regexp;
+    }
 
-	public void setHideSubNGram(boolean hideSubNGram) {
-		this.hideSubNGram = hideSubNGram;
-	}
+    public void setRegexp(String regexp) {
+        this.regexp = regexp;
+    }
 
-	public void setKwRefCorpus(String kwRefCorpus) {
-		this.kwRefCorpus = kwRefCorpus;
-	}
+    public String getSearchAttribute() {
+        return this.searchAttribute;
+    }
 
-	public void setKwRefSubCorpus(String kwRefSubCorpus) {
-		this.kwRefSubCorpus = kwRefSubCorpus;
-	}
+    public void setSearchAttribute(String searchAttribute) {
+        this.searchAttribute = searchAttribute;
+    }
 
-	public void setMaxFreq(int maxFreq) {
-		this.maxFreq = maxFreq;
-	}
+    public String getSubCorpus() {
+        return this.subCorpus;
+    }
 
-	public void setMinFreq(int minFreq) {
-		this.minFreq = minFreq;
-	}
+    public void setSubCorpus(String subCorpus) {
+        this.subCorpus = subCorpus;
+    }
 
-	public void setNonWords(boolean nonWords) {
-		this.nonWords = nonWords;
-	}
+    public String getWhiteList() {
+        return this.whiteList;
+    }
 
-	public void setOutputType(OutputType outputType) {
-		this.outputType = outputType;
-	}
+    public void setWhiteList(String whiteList) {
+        this.whiteList = whiteList;
+    }
 
-	public void setRegexp(String regexp) {
-		this.regexp = regexp;
-	}
+    public int getnGramFrom() {
+        return this.nGramFrom;
+    }
 
-	public void setSearchAttribute(String searchAttribute) {
-		this.searchAttribute = searchAttribute;
-	}
+    public void setnGramFrom(int nGramFrom) {
+        this.nGramFrom = nGramFrom;
+    }
 
-	public void setSubCorpus(String subCorpus) {
-		this.subCorpus = subCorpus;
-	}
+    public int getnGramTo() {
+        return this.nGramTo;
+    }
 
-	public void setUseNGrams(boolean useNGrams) {
-		this.useNGrams = useNGrams;
-	}
+    public void setnGramTo(int nGramTo) {
+        this.nGramTo = nGramTo;
+    }
 
-	public void setWhiteList(String whiteList) {
-		this.whiteList = whiteList;
-	}
+    public boolean isHideSubNGram() {
+        return this.hideSubNGram;
+    }
 
-	public void setnGramFrom(int nGramFrom) {
-		this.nGramFrom = nGramFrom;
-	}
+    public void setHideSubNGram(boolean hideSubNGram) {
+        this.hideSubNGram = hideSubNGram;
+    }
 
-	public void setnGramTo(int nGramTo) {
-		this.nGramTo = nGramTo;
-	}
+    public boolean isNonWords() {
+        return this.nonWords;
+    }
 
-	public enum FigureType {
-		HIT, DOC, ARF;
+    public void setNonWords(boolean nonWords) {
+        this.nonWords = nonWords;
+    }
 
-		public static boolean contain(String txt) {
-			try {
-				WordListRequest.FigureType.valueOf(txt);
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-	}
+    public boolean isUseNGrams() {
+        return this.useNGrams;
+    }
 
-	public enum OutputType {
-		SIMPLE, KEYWORDS, CHANGE;
+    public void setUseNGrams(boolean useNGrams) {
+        this.useNGrams = useNGrams;
+    }
 
-		public static boolean contain(String txt) {
-			try {
-				WordListRequest.OutputType.valueOf(txt);
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-	}
+    public enum FigureType {
+        HIT, DOC, ARF;
 
-	public enum ChangeOutputAttrType {
-		WORD, TAG, LEMMA;
+        public static boolean contain(String txt) {
+            try {
+                WordListRequest.FigureType.valueOf(txt);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
 
-		public static boolean contain(String txt) {
-			try {
-				WordListRequest.ChangeOutputAttrType.valueOf(txt);
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-	}
+    public enum OutputType {
+        SIMPLE, KEYWORDS, CHANGE;
+
+        public static boolean contain(String txt) {
+            try {
+                WordListRequest.OutputType.valueOf(txt);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
+    public enum ChangeOutputAttrType {
+        WORD, TAG, LEMMA;
+
+        public static boolean contain(String txt) {
+            try {
+                WordListRequest.ChangeOutputAttrType.valueOf(txt);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
 
 }

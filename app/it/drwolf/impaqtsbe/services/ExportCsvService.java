@@ -35,7 +35,6 @@ public class ExportCsvService {
             String[] line = new String[]{String.join(",", frl.getWord()), String.valueOf(frl.getFreq()), String.valueOf(frl.getRel())};
             strList.add(line);
         }
-        //this.writeCsv(strList, filePathStr);
         this.appendCsv(strList, filePathStr);
     }
 
@@ -62,7 +61,6 @@ public class ExportCsvService {
                     String.valueOf(frl.getFreq()));
             strList.add(line);
         }
-        //this.writeCsv(strList, filePathStr);
         this.appendCsv(strList, filePathStr);
     }
 
@@ -75,7 +73,6 @@ public class ExportCsvService {
                     kwic.getRightContext().get(0)};
             strList.add(line);
         }
-        //this.writeCsv(strList, filePathStr);
         this.appendCsv(strList, filePathStr);
     }
 

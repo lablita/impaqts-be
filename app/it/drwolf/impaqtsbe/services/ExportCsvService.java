@@ -1,10 +1,7 @@
 package it.drwolf.impaqtsbe.services;
 
 import com.opencsv.CSVWriter;
-import it.drwolf.impaqtsbe.dto.FrequencyResultLine;
-import it.drwolf.impaqtsbe.dto.KWICLine;
-import it.drwolf.impaqtsbe.dto.QueryRequest;
-import it.drwolf.impaqtsbe.dto.QueryResponse;
+import it.drwolf.impaqtsbe.dto.*;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.FileWriter;
@@ -76,6 +73,17 @@ public class ExportCsvService {
         this.appendCsv(strList, filePathStr);
     }
 
+    private void elaborateWordListRequestCsv(QueryResponse queryResponse, String filePathStr) throws Exception {
+        List<String[]> strList = new ArrayList<>();
+        String[] header = new String[]{queryResponse.getWordList().getSearchAttribute(), ExportCsvService.FREQUENCY};
+        strList.add(header);
+        for (WordListItem wli : queryResponse.getWordList().getItems()) {
+            String[] line = new String[]{wli.getWord(), String.valueOf(wli.getFrequency())};
+            strList.add(line);
+        }
+        this.appendCsv(strList, filePathStr);
+    }
+
     public void storageTmpFileCsvFromQueryResponse(QueryResponse queryResponse, QueryRequest.RequestType requestType,
                                                    String filePathStr) throws Exception {
 
@@ -88,6 +96,9 @@ public class ExportCsvService {
                 break;
             case TEXTUAL_QUERY_REQUEST:
                 this.elaborateTextualQueryRequestCsv(queryResponse, filePathStr);
+                break;
+            case WORD_LIST_REQUEST:
+                this.elaborateWordListRequestCsv(queryResponse, filePathStr);
                 break;
             default:
                 break;

@@ -20,6 +20,8 @@ DELETE  /registry                                       it.drwolf.impaqtsbe.cont
 GET     /corpus/upload/:uuid                            it.drwolf.impaqtsbe.controllers.CorpusController.corpusUploadStatus(uuid: String)
 GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.controllers.CorpusController.getWideContext(corpusName: String, pos: Long, hitlen: Integer)
 GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)
+
++ nocsrf
 POST    /word-list                                      it.drwolf.impaqtsbe.controllers.CorpusController.getWordList(request: Request)
 
 + nocsrf

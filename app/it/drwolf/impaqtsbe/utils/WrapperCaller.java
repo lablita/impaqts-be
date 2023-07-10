@@ -161,13 +161,15 @@ public class WrapperCaller {
         if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString().equals(queryRequest.getQueryType())
                 || QueryRequest.RequestType.MULTI_FREQUENCY_QUERY_REQUEST.toString().equals(queryRequest.getQueryType())) {
             resultSize = queryResponse.getFrequency().getTotal();
+        } else if (QueryRequest.RequestType.WORD_LIST_REQUEST.toString().equals(queryRequest.getQueryType())) {
+            resultSize = queryResponse.getWordList().getTotalItems();
         } else {
             resultSize = queryResponse.getCurrentSize();
         }
         Integer pageSize = queryRequest.getEnd() - queryRequest.getStart();
         Integer start;
         Integer end = queryRequest.getEnd();
-        exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
+        exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, true);
         if (end >= resultSize) {
             FileUtils.writeStringToFile(new File(progressFilePathStr), "OK", StandardCharsets.UTF_8);
         } else {
@@ -178,7 +180,7 @@ public class WrapperCaller {
                 queryRequest.setEnd(end);
                 queryResponse = this.executeNonQueryRequest(queryRequest);
                 try {
-                    exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr);
+                    exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, false);
                 } catch (Exception e) {
                     FileUtils.writeStringToFile(new File(progressFilePathStr), "KO", StandardCharsets.UTF_8);
                     break;

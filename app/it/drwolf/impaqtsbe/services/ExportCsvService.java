@@ -21,13 +21,15 @@ public class ExportCsvService {
     static final String KWIC = "Kwich";
     static final String RIGHT = "Right";
 
-    private void elaborateMetadataFrequencyCsv(QueryResponse queryResponse, String filePathStr) throws Exception {
+    private void elaborateMetadataFrequencyCsv(QueryResponse queryResponse, String filePathStr, boolean header) throws Exception {
         List<String[]> strList = new ArrayList<>();
-        String[] header = new String[]{queryResponse.getFrequency().getHead(), ExportCsvService.FREQUENCY,
-                ExportCsvService.REL,
-                String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT, queryResponse.getFrequency().getTotal(),
-                        ExportCsvService.OVERALL_FREQ, queryResponse.getFrequency().getTotalFreq())};
-        strList.add(header);
+        if (header) {
+            String[] headerStrs = new String[]{queryResponse.getFrequency().getHead(), ExportCsvService.FREQUENCY,
+                    ExportCsvService.REL,
+                    String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT, queryResponse.getFrequency().getTotal(),
+                            ExportCsvService.OVERALL_FREQ, queryResponse.getFrequency().getTotalFreq())};
+            strList.add(headerStrs);
+        }
         for (FrequencyResultLine frl : queryResponse.getFrequency().getItems()) {
             String[] line = new String[]{String.join(",", frl.getWord()), String.valueOf(frl.getFreq()), String.valueOf(frl.getRel())};
             strList.add(line);
@@ -35,7 +37,7 @@ public class ExportCsvService {
         this.appendCsv(strList, filePathStr);
     }
 
-    private void elaborateMultilevelFrequencyCsv(QueryResponse queryResponse, String filePathStr) throws Exception {
+    private void elaborateMultilevelFrequencyCsv(QueryResponse queryResponse, String filePathStr, boolean header) throws Exception {
         List<String[]> strList = new ArrayList<>();
         List<String> headerStrListNormalized = new ArrayList<>();
         List<String> headerStrList = List.of(queryResponse.getFrequency().getHead().split(" "));
@@ -48,11 +50,13 @@ public class ExportCsvService {
                 headerStrListNormalized.add(ExportCsvService.TAG);
             }
         });
-        String[] header = ArrayUtils.addAll(headerStrListNormalized.toArray(new String[headerStrListNormalized.size()]),
-                ExportCsvService.FREQUENCY, String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT,
-                        queryResponse.getFrequency().getTotal(), ExportCsvService.OVERALL_FREQ,
-                        queryResponse.getFrequency().getTotalFreq()));
-        strList.add(header);
+        if (header) {
+            String[] headerStrs = ArrayUtils.addAll(headerStrListNormalized.toArray(new String[headerStrListNormalized.size()]),
+                    ExportCsvService.FREQUENCY, String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT,
+                            queryResponse.getFrequency().getTotal(), ExportCsvService.OVERALL_FREQ,
+                            queryResponse.getFrequency().getTotalFreq()));
+            strList.add(headerStrs);
+        }
         for (FrequencyResultLine frl : queryResponse.getFrequency().getItems()) {
             String[] line = ArrayUtils.addAll(frl.getWord().toArray(new String[frl.getWord().size()]),
                     String.valueOf(frl.getFreq()));
@@ -61,10 +65,12 @@ public class ExportCsvService {
         this.appendCsv(strList, filePathStr);
     }
 
-    private void elaborateTextualQueryRequestCsv(QueryResponse queryResponse, String filePathStr) throws Exception {
+    private void elaborateTextualQueryRequestCsv(QueryResponse queryResponse, String filePathStr, boolean header) throws Exception {
         List<String[]> strList = new ArrayList<>();
-        String[] header = new String[]{ExportCsvService.LEFT, ExportCsvService.KWIC, ExportCsvService.RIGHT};
-        strList.add(header);
+        if (header) {
+            String[] headerStrs = new String[]{ExportCsvService.LEFT, ExportCsvService.KWIC, ExportCsvService.RIGHT};
+            strList.add(headerStrs);
+        }
         for (KWICLine kwic : queryResponse.getKwicLines()) {
             String[] line = new String[]{kwic.getLeftContext().get(0), kwic.getKwic(),
                     kwic.getRightContext().get(0)};
@@ -73,10 +79,12 @@ public class ExportCsvService {
         this.appendCsv(strList, filePathStr);
     }
 
-    private void elaborateWordListRequestCsv(QueryResponse queryResponse, String filePathStr) throws Exception {
+    private void elaborateWordListRequestCsv(QueryResponse queryResponse, String filePathStr, boolean header) throws Exception {
         List<String[]> strList = new ArrayList<>();
-        String[] header = new String[]{queryResponse.getWordList().getSearchAttribute(), ExportCsvService.FREQUENCY};
-        strList.add(header);
+        if (header) {
+            String[] headerStrs = new String[]{queryResponse.getWordList().getSearchAttribute(), ExportCsvService.FREQUENCY};
+            strList.add(headerStrs);
+        }
         for (WordListItem wli : queryResponse.getWordList().getItems()) {
             String[] line = new String[]{wli.getWord(), String.valueOf(wli.getFrequency())};
             strList.add(line);
@@ -85,20 +93,20 @@ public class ExportCsvService {
     }
 
     public void storageTmpFileCsvFromQueryResponse(QueryResponse queryResponse, QueryRequest.RequestType requestType,
-                                                   String filePathStr) throws Exception {
+                                                   String filePathStr, boolean header) throws Exception {
 
         switch (requestType) {
             case METADATA_FREQUENCY_QUERY_REQUEST:
-                this.elaborateMetadataFrequencyCsv(queryResponse, filePathStr);
+                this.elaborateMetadataFrequencyCsv(queryResponse, filePathStr, header);
                 break;
             case MULTI_FREQUENCY_QUERY_REQUEST:
-                this.elaborateMultilevelFrequencyCsv(queryResponse, filePathStr);
+                this.elaborateMultilevelFrequencyCsv(queryResponse, filePathStr, header);
                 break;
             case TEXTUAL_QUERY_REQUEST:
-                this.elaborateTextualQueryRequestCsv(queryResponse, filePathStr);
+                this.elaborateTextualQueryRequestCsv(queryResponse, filePathStr, header);
                 break;
             case WORD_LIST_REQUEST:
-                this.elaborateWordListRequestCsv(queryResponse, filePathStr);
+                this.elaborateWordListRequestCsv(queryResponse, filePathStr, header);
                 break;
             default:
                 break;

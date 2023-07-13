@@ -14,7 +14,6 @@ public class Startup {
 	public static final String IMPAQTS_WRAPPER_JAR_PATH = "impaqts.wrapper.jar.path";
 	public static final String CSV_TEMP_PATH = "csv.temp.path";
 	public static final String CSV_EXT = "csv.ext";
-
 	public static final String CSV_SCHEDULER_HOUR = "csv.scheduler.hour";
 	public static final String CSV_PROGRESS_FILE = "csv.progress.file";
 	private static final String MANATEE_REGISTRY_PATH = "manatee.registry.path";

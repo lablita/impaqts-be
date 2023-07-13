@@ -18,6 +18,13 @@ DELETE  /corpus                                         it.drwolf.impaqtsbe.cont
 POST    /registry/upload                                it.drwolf.impaqtsbe.controllers.CorpusController.uploadRegistry(request: Request)
 DELETE  /registry                                       it.drwolf.impaqtsbe.controllers.CorpusController.deleteRegistry(registryName: String)
 GET     /corpus/upload/:uuid                            it.drwolf.impaqtsbe.controllers.CorpusController.corpusUploadStatus(uuid: String)
-
 GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.controllers.CorpusController.getWideContext(corpusName: String, pos: Long, hitlen: Integer)
 GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)
+
++ nocsrf
+POST    /word-list                                      it.drwolf.impaqtsbe.controllers.CorpusController.getWordList(request: Request)
+
++ nocsrf
+POST    /export-csv                                     it.drwolf.impaqtsbe.controllers.ExportController.exportCsv(request: Request)
+GET     /download/:filename/:uuid                       it.drwolf.impaqtsbe.controllers.ExportController.downloadFileByUuid(filename: String, uuid: String)
+GET     /progress-csv/:uuid                             it.drwolf.impaqtsbe.controllers.ExportController.getProgressCsvByUUID(uuid: String)

@@ -20,5 +20,7 @@ libraryDependencies += "com.auth0" % "auth0" % "1.17.0"
 libraryDependencies += "com.nimbusds" % "nimbus-jose-jwt" % "9.25.6"
 // https://mvnrepository.com/artifact/org.apache.commons/commons-text
 libraryDependencies += "org.apache.commons" % "commons-text" % "1.10.0"
+// https://mvnrepository.com/artifact/com.opencsv/opencsv
+libraryDependencies += "com.opencsv" % "opencsv" % "3.7"
 
 PlayKeys.externalizeResources := false

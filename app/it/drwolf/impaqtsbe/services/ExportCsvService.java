@@ -23,7 +23,7 @@ public class ExportCsvService {
 	static final String TAG = "tag";
 
 	static final String LEFT = "Left";
-	static final String KWIC = "Kwich";
+	static final String KWIC = "Kwic";
 	static final String RIGHT = "Right";
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {

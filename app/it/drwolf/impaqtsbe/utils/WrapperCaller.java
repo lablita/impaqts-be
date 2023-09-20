@@ -117,6 +117,17 @@ public class WrapperCaller {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				this.logger.debug("Result line: {}", line);
+				if (line.startsWith("*** ERROR ")) {
+					// gestione degli errori di sintassi CQL
+					QueryResponse qrError = new QueryResponse(queryRequest.getId());
+					ErrorResponse er = new ErrorResponse();
+					er.setErrorCode(Http.Status.BAD_REQUEST);
+					er.setErrorMessage(line.trim());
+					qrError.setErrorResponse(er);
+					this.out.tell(Json.toJson(qrError), null);
+					this.logger.error(line.trim());
+					continue;
+				}
 				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;
@@ -158,8 +169,8 @@ public class WrapperCaller {
 
 		QueryResponse queryResponse = this.executeNonQueryRequest(queryRequest);
 		Integer resultSize;
-		if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString()
-				.equals(queryRequest.getQueryType()) || QueryRequest.RequestType.MULTI_FREQUENCY_QUERY_REQUEST.toString()
+		if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString().equals(queryRequest.getQueryType())
+				|| QueryRequest.RequestType.MULTI_FREQUENCY_QUERY_REQUEST.toString()
 				.equals(queryRequest.getQueryType())) {
 			resultSize = queryResponse.getFrequency().getTotal();
 		} else if (QueryRequest.RequestType.WORD_LIST_REQUEST.toString().equals(queryRequest.getQueryType())) {
@@ -255,7 +266,7 @@ public class WrapperCaller {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("###") || line.startsWith("json")) {
+				if (line.startsWith("###") || line.startsWith("json") || line.startsWith("***")) {
 					// skip comments line
 					continue;
 				}

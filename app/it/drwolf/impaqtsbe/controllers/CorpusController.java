@@ -140,7 +140,7 @@ public class CorpusController extends Controller {
 				this.startup.getCsvTempPath(), this.startup.getProgressFileCsv(), this.startup.getFrequencyListsDir());
 		QueryRequest queryRequest = new QueryRequest();
 		queryRequest.setStart(0);
-		queryRequest.setEnd(Integer.MAX_VALUE);
+		queryRequest.setEnd(1000);
 		queryRequest.setCorpus(corpusName);
 		queryRequest.setCql("");
 		queryRequest.setQueryType("WORD_LIST_REQUEST");
@@ -161,7 +161,7 @@ public class CorpusController extends Controller {
 
 		queryRequest = new QueryRequest();
 		queryRequest.setStart(0);
-		queryRequest.setEnd(Integer.MAX_VALUE);
+		queryRequest.setEnd(1000);
 		queryRequest.setCorpus(corpusName);
 		queryRequest.setCql("");
 		queryRequest.setQueryType("WORD_LIST_REQUEST");

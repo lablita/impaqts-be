@@ -23,6 +23,7 @@ public class Startup {
 	private static final String DOCKER_MANATEE_PATH = "docker.manatee.path";
 	private static final String CORPORA_FOLDER_PATH = "corpora.folder.path";
 	private static final String CACHE_DIR = "cache.dir";
+	private static final String FREQUENCY_LISTS_DIR = "frequencylists.dir";
 	private final Logger.ALogger logger = Logger.of(Startup.class);
 	private String manateeRegistryPath;
 	private String manateeLibPath;
@@ -36,6 +37,7 @@ public class Startup {
 	private String progressFileCsv;
 	private String csvExt;
 	private String csvTempPath;
+	private String frequencyListsDir;
 
 	@Inject
 	public Startup(Config configuration) {
@@ -68,6 +70,10 @@ public class Startup {
 
 	public String getDockerSwitch() {
 		return this.dockerSwitch;
+	}
+
+	public String getFrequencyListsDir() {
+		return frequencyListsDir;
 	}
 
 	public String getJavaExecutable() {
@@ -137,6 +143,12 @@ public class Startup {
 			System.exit(1);
 		}
 
+		this.frequencyListsDir = configuration.getString(Startup.FREQUENCY_LISTS_DIR);
+		if (this.frequencyListsDir == null || this.frequencyListsDir.isEmpty()) {
+			this.logger.error("Frequency lists path not found. Stopping server.");
+			System.exit(1);
+		}
+
 		this.dockerSwitch = configuration.getString(Startup.DOCKER_SWITCH);
 		if (this.dockerSwitch == null || !this.dockerSwitch.equals("yes")) {
 			File manateeRegistryDir = new File(this.manateeRegistryPath);
@@ -161,17 +173,21 @@ public class Startup {
 			}
 		} else {
 			this.dockerManateeRegistry = configuration.getString(Startup.DOCKER_MANATEE_REGISTRY);
-			if (this.dockerSwitch.equals(
-					"yes") && (this.dockerManateeRegistry == null || this.dockerManateeRegistry.isEmpty())) {
+			if (this.dockerSwitch.equals("yes") && (this.dockerManateeRegistry == null
+					|| this.dockerManateeRegistry.isEmpty())) {
 				this.logger.error("Docker Manatee Registry not found. Stopping server.");
 				System.exit(1);
 			}
 			this.dockerManateePath = configuration.getString(Startup.DOCKER_MANATEE_PATH);
-			if (this.dockerSwitch.equals(
-					"yes") && (this.dockerManateePath == null || this.dockerManateePath.isEmpty())) {
+			if (this.dockerSwitch.equals("yes") && (this.dockerManateePath == null
+					|| this.dockerManateePath.isEmpty())) {
 				this.logger.error("Docker Manatee Path not found. Stopping server.");
 				System.exit(1);
 			}
 		}
+	}
+
+	public void setFrequencyListsDir(String frequencyListsDir) {
+		this.frequencyListsDir = frequencyListsDir;
 	}
 }

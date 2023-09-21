@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ public class WrapperCaller {
 	private final String cacheDir;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final Integer csvMaxLength = 10000;
+	private final String frequencyListsDir;
 	private String csvExt = "";
 	private String csvTempPath = "";
 	private String progressFileCsv = "";
@@ -62,11 +65,12 @@ public class WrapperCaller {
 		this.dockerManateeRegistry = dockerManateeRegistry;
 		this.dockerManateePath = dockerManateePath;
 		this.cacheDir = cacheDir;
+		this.frequencyListsDir = null;
 	}
 
 	public WrapperCaller(ActorRef out, String manateeRegistryPath, String manateeLibPath, String javaExecutable,
 			String wrapperPath, String dockerSwitch, String dockerManateeRegistry, String dockerManateePath,
-			String cacheDir, String csvExt, String csvTempPath, String progressFileCsv) {
+			String cacheDir, String csvExt, String csvTempPath, String progressFileCsv, String frequencyListsDir) {
 		this.out = out;
 		this.manateeRegistryPath = manateeRegistryPath;
 		this.manateeLibPath = manateeLibPath;
@@ -79,6 +83,7 @@ public class WrapperCaller {
 		this.csvExt = csvExt;
 		this.csvTempPath = csvTempPath;
 		this.progressFileCsv = progressFileCsv;
+		this.frequencyListsDir = frequencyListsDir;
 	}
 
 	public QueryResponse executeNonQueryRequest(QueryRequest queryRequest) throws IOException {
@@ -160,13 +165,11 @@ public class WrapperCaller {
 	}
 
 	public void executeQueryAndWriteCSV(QueryRequest queryRequest, ExportCsvService exportCsvService,
-			QueryRequest.RequestType queryType, String uuid) throws Exception {
+			QueryRequest.RequestType queryType, String uuid, boolean complete) throws Exception {
 		String tmpPathStr = this.csvTempPath + "/" + uuid;
 		Files.createDirectories(Paths.get(tmpPathStr));
 		final String filePathStr = tmpPathStr + "/" + uuid + this.csvExt;
-
 		final String progressFilePathStr = tmpPathStr + "/" + this.progressFileCsv;
-
 		QueryResponse queryResponse = this.executeNonQueryRequest(queryRequest);
 		Integer resultSize;
 		if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString().equals(queryRequest.getQueryType())
@@ -178,15 +181,18 @@ public class WrapperCaller {
 		} else {
 			resultSize = queryResponse.getCurrentSize();
 		}
-		//max 10000 lines
-		resultSize = resultSize <= csvMaxLength ? resultSize : csvMaxLength;
-
+		if (!complete) {
+			//max 10000 lines
+			resultSize = resultSize <= csvMaxLength ? resultSize : csvMaxLength;
+		}
 		Integer pageSize = queryRequest.getEnd() - queryRequest.getStart();
 		Integer start;
 		Integer end = queryRequest.getEnd();
 		exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, true);
+		boolean completeWithoutErrors = true;
+		final File progressFile = new File(progressFilePathStr);
 		if (end >= resultSize) {
-			FileUtils.writeStringToFile(new File(progressFilePathStr), "OK", StandardCharsets.UTF_8);
+			FileUtils.writeStringToFile(progressFile, "OK", StandardCharsets.UTF_8);
 		} else {
 			while (end < resultSize) {
 				start = end;
@@ -197,12 +203,29 @@ public class WrapperCaller {
 				try {
 					exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, false);
 				} catch (Exception e) {
-					FileUtils.writeStringToFile(new File(progressFilePathStr), "KO", StandardCharsets.UTF_8);
+					completeWithoutErrors = false;
+					FileUtils.writeStringToFile(progressFile, "KO", StandardCharsets.UTF_8);
 					break;
 				}
 				int progress = this.progressValue(resultSize, end);
-				FileUtils.writeStringToFile(new File(progressFilePathStr),
-						(end < resultSize ? String.valueOf(progress) : "OK"), StandardCharsets.UTF_8);
+				FileUtils.writeStringToFile(progressFile, (end < resultSize ? String.valueOf(progress) : "OK"),
+						StandardCharsets.UTF_8);
+			}
+
+		}
+		if (complete && completeWithoutErrors) {
+			// move generated file to frequencyListsFolder
+			Path frequencyListPath = Files.createDirectories(
+					Paths.get(this.frequencyListsDir, queryRequest.getCorpus()));
+			String fileName = "all_lemmas.csv";
+			if ("word".equals(queryRequest.getWordListRequest().getSearchAttribute())) {
+				fileName = "all_words.csv";
+			}
+			if (frequencyListPath != null && Files.exists(frequencyListPath) && Files.isWritable(frequencyListPath)) {
+				Path destFilePath = Paths.get(frequencyListPath.toString(), fileName);
+				Files.move(Paths.get(filePathStr), destFilePath, StandardCopyOption.REPLACE_EXISTING);
+			} else {
+				logger.error("Unable to write frequency lists");
 			}
 		}
 	}

@@ -6,52 +6,61 @@ import it.drwolf.impaqtsbe.utils.WrapperCaller;
 
 public class ExportCsvMessage {
 
-    private WrapperCaller wrapperCaller;
+	private WrapperCaller wrapperCaller;
 
-    private ExportCsvService exportCsvService;
+	private ExportCsvService exportCsvService;
 
-    private QueryRequest queryRequest;
-    private QueryRequest.RequestType queryType;
-    private String uuid;
+	private QueryRequest queryRequest;
+	private QueryRequest.RequestType queryType;
+	private String uuid;
+	private boolean complete = false;
 
-    public String getUuid() {
-        return uuid;
-    }
+	public ExportCsvService getExportCsvService() {
+		return exportCsvService;
+	}
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+	public QueryRequest getQueryRequest() {
+		return queryRequest;
+	}
 
-    public ExportCsvService getExportCsvService() {
-        return exportCsvService;
-    }
+	public QueryRequest.RequestType getQueryType() {
+		return queryType;
+	}
 
-    public void setExportCsvService(ExportCsvService exportCsvService) {
-        this.exportCsvService = exportCsvService;
-    }
+	public String getUuid() {
+		return uuid;
+	}
 
-    public WrapperCaller getWrapperCaller() {
-        return wrapperCaller;
-    }
+	public WrapperCaller getWrapperCaller() {
+		return wrapperCaller;
+	}
 
-    public void setWrapperCaller(WrapperCaller wrapperCaller) {
-        this.wrapperCaller = wrapperCaller;
-    }
+	public boolean isComplete() {
+		return complete;
+	}
 
-    public QueryRequest getQueryRequest() {
-        return queryRequest;
-    }
+	public void setComplete(boolean complete) {
+		this.complete = complete;
+	}
 
-    public void setQueryRequest(QueryRequest queryRequest) {
-        this.queryRequest = queryRequest;
-    }
+	public void setExportCsvService(ExportCsvService exportCsvService) {
+		this.exportCsvService = exportCsvService;
+	}
 
-    public QueryRequest.RequestType getQueryType() {
-        return queryType;
-    }
+	public void setQueryRequest(QueryRequest queryRequest) {
+		this.queryRequest = queryRequest;
+	}
 
-    public void setQueryType(QueryRequest.RequestType queryType) {
-        this.queryType = queryType;
-    }
+	public void setQueryType(QueryRequest.RequestType queryType) {
+		this.queryType = queryType;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public void setWrapperCaller(WrapperCaller wrapperCaller) {
+		this.wrapperCaller = wrapperCaller;
+	}
 
 }

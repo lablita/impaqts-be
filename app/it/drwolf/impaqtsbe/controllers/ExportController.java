@@ -32,83 +32,82 @@ import java.util.UUID;
 
 public class ExportController {
 
-    private final Startup startup;
-    private final ExportCsvService exportCsvService;
-    private final ActorRef exportCsvActor;
+	private final Startup startup;
+	private final ExportCsvService exportCsvService;
+	private final ActorRef exportCsvActor;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final Config configuration;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Config configuration;
 
-    @Inject
-    public ExportController(Startup startup, ExportCsvService exportCsvService, ActorSystem actorSystem,
-                            Config configuration) {
-        this.startup = startup;
-        this.exportCsvService = exportCsvService;
-        this.exportCsvActor = actorSystem.actorOf(ExportCsvActor.getProps());
-        this.configuration = configuration;
-    }
+	@Inject
+	public ExportController(Startup startup, ExportCsvService exportCsvService, ActorSystem actorSystem,
+			Config configuration) {
+		this.startup = startup;
+		this.exportCsvService = exportCsvService;
+		this.exportCsvActor = actorSystem.actorOf(ExportCsvActor.getProps());
+		this.configuration = configuration;
+	}
 
-    public Result downloadFileByUuid(String filename, String uuid) {
-        final String csvFilename = uuid + this.configuration.getString(Startup.CSV_EXT);
-        Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH) + "/" + uuid);
-        final String filePathStr = path.toFile().getPath() + "/" + csvFilename;
+	public Result downloadFileByUuid(String filename, String uuid) {
+		final String csvFilename = uuid + this.configuration.getString(Startup.CSV_EXT);
+		Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH) + "/" + uuid);
+		final String filePathStr = path.toFile().getPath() + "/" + csvFilename;
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		final String fn = filename + "_" + sdf.format(new Date()) + ".csv";
+		return Results.ok(new File(filePathStr))
+				.as("text/csv")
+				.withHeader(Http.HeaderNames.CONTENT_DISPOSITION, "attachment; filename=" + fn)
+				.withHeader("Download-Filename", fn);
+	}
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public Result exportCsv(Http.Request request) {
+		JsonNode bodyAsJson = request.body().asJson();
+		QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
+		UUID uuid = UUID.randomUUID();
+		try {
+			Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH));
+			if (!Files.exists(path)) {
+				Files.createDirectories(path);
+			}
+			WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+					this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+					this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+					this.startup.getDockerManateePath(), this.startup.getCacheDir(), this.startup.getCsvExt(),
+					this.startup.getCsvTempPath(), this.startup.getProgressFileCsv(),
+					this.startup.getCorporaFolderPath());
 
-        final String fn = filename + "_" + sdf.format(new Date()) + ".csv";
-        return Results.ok(new File(filePathStr))
-                .withHeader(Http.HeaderNames.CONTENT_TYPE, "application/octet-stream")
-                .withHeader(Http.HeaderNames.CONTENT_DISPOSITION, "attachment; filename=" + fn)
-                .withHeader("Download-Filename", fn);
-    }
+			QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
+			ExportCsvMessage exportCsvMessage = new ExportCsvMessage();
+			exportCsvMessage.setWrapperCaller(wrapperCaller);
+			exportCsvMessage.setExportCsvService(this.exportCsvService);
+			exportCsvMessage.setQueryRequest(qr);
+			exportCsvMessage.setQueryType(queryType);
+			exportCsvMessage.setUuid(uuid.toString());
 
-    public Result exportCsv(Http.Request request) throws InterruptedException {
-        JsonNode bodyAsJson = request.body().asJson();
-        QueryRequest qr = Json.fromJson(bodyAsJson, QueryRequest.class);
-        UUID uuid = UUID.randomUUID();
-        try {
-            Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH));
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
-                    this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
-                    this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
-                    this.startup.getDockerManateePath(), this.startup.getCacheDir(), this.startup.getCsvExt(),
-                    this.startup.getCsvTempPath(), this.startup.getProgressFileCsv());
+			this.exportCsvActor.tell(exportCsvMessage, null);
+			return Results.ok(Json.toJson(uuid));
+		} catch (Exception e) {
+			return Results.internalServerError("An error occurred while creating the csv file");
+		}
+	}
 
-            QueryRequest.RequestType queryType = QueryRequest.RequestType.valueOf(qr.getQueryType());
-            ExportCsvMessage exportCsvMessage = new ExportCsvMessage();
-            exportCsvMessage.setWrapperCaller(wrapperCaller);
-            exportCsvMessage.setExportCsvService(this.exportCsvService);
-            exportCsvMessage.setQueryRequest(qr);
-            exportCsvMessage.setQueryType(queryType);
-            exportCsvMessage.setUuid(uuid.toString());
+	public Result getProgressCsvByUUID(String uuid) {
+		final String csvProgressFilename = this.configuration.getString(Startup.CSV_PROGRESS_FILE);
+		Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH) + "/" + uuid);
+		final String csvProgressFileStr = path.toFile().getPath() + "/" + csvProgressFilename;
+		File csvProgressFile = new File(csvProgressFileStr);
+		ProgressStatusDTO progressStatusDTO = new ProgressStatusDTO();
+		try {
+			String data = FileUtils.readFileToString(csvProgressFile, StandardCharsets.UTF_8);
+			progressStatusDTO.setStatus(data);
+			return Results.ok(Json.toJson(progressStatusDTO));
+		} catch (IOException e) {
+			//Errore dovuto al tentativo di lettura dettato dal polling del FE, mentre viene scritto il file progress.txt
+			//resituisco KK
+			progressStatusDTO.setStatus("KK");
+			this.logger.warn("Error while opening progress file");
+			return Results.ok(Json.toJson(progressStatusDTO));
+		}
 
-            this.exportCsvActor.tell(exportCsvMessage, null);
-            return Results.ok(Json.toJson(uuid));
-        } catch (Exception e) {
-            return Results.internalServerError("An error occurred while creating the csv file");
-        }
-    }
-
-    public Result getProgressCsvByUUID(String uuid) {
-        final String csvProgressFilename = this.configuration.getString(Startup.CSV_PROGRESS_FILE);
-        Path path = Paths.get(this.configuration.getString(Startup.CSV_TEMP_PATH) + "/" + uuid);
-        final String csvProgressFileStr = path.toFile().getPath() + "/" + csvProgressFilename;
-        File csvProgressFile = new File(csvProgressFileStr);
-        ProgressStatusDTO progressStatusDTO = new ProgressStatusDTO();
-        try {
-            String data = FileUtils.readFileToString(csvProgressFile, StandardCharsets.UTF_8);
-            progressStatusDTO.setStatus(data);
-            return Results.ok(Json.toJson(progressStatusDTO));
-        } catch (IOException e) {
-            //Errore dovuto al tentativo di lettura dettato dal polling del FE, mentre viene scritto il file progress.txt
-            //resituisco KK
-            progressStatusDTO.setStatus("KK");
-            this.logger.warn("Error while opening progress file");
-            return Results.ok(Json.toJson(progressStatusDTO));
-        }
-
-    }
+	}
 }

@@ -1,6 +1,7 @@
 package it.drwolf.impaqtsbe.services;
 
 import com.opencsv.CSVWriter;
+import it.drwolf.impaqtsbe.dto.CollocationItem;
 import it.drwolf.impaqtsbe.dto.FrequencyResultLine;
 import it.drwolf.impaqtsbe.dto.KWICLine;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
@@ -12,6 +13,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ExportCsvService {
 	static final String FREQUENCY = "frequency";
@@ -21,15 +23,44 @@ public class ExportCsvService {
 	static final String WORD = "word";
 	static final String LEMMA = "lemma";
 	static final String TAG = "tag";
-
 	static final String LEFT = "Left";
 	static final String KWIC = "Kwic";
 	static final String RIGHT = "Right";
+	static final String COLLOCATION = "collocation";
+	static final String CONC_COUNT = "Concurrence count";
+	static final String CAND_COUNT = "Candidate count";
+	static final String T_SCORE = "T-score";
+	static final String MI = "MI";
+	static final String MI3 = "MI3";
+	static final String LOG_LIKELIHOOD = "log likelihood";
+	static final String MIN_SENS = "min. sensitivity";
+	static final String LOG_DICE = "logDice";
+	static final String MI_LOG_F = "MI.log_f";
+
+	private static final Map<String, String> CAPITALI = Map.of("m", MI, "3", MI3, "l", LOG_LIKELIHOOD, "s", MIN_SENS,
+			"d", LOG_DICE, "p", MI_LOG_F);
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
 		try (CSVWriter writer = new CSVWriter(new FileWriter(filePathStr, true))) {
 			writer.writeAll(lines);
 		}
+	}
+
+	private void elaborateCollocationCsv(QueryResponse queryResponse, String filePathStr, boolean header)
+			throws Exception {
+		List<String[]> strList = new ArrayList<>();
+		if (header) {
+			String[] headerStrs = new String[] { "", ExportCsvService.COLLOCATION, ExportCsvService.REL,
+					String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT, queryResponse.getCollocations().size(),
+							ExportCsvService.OVERALL_FREQ, 5) };
+			strList.add(headerStrs);
+		}
+		for (CollocationItem ci : queryResponse.getCollocations()) {
+			String[] line = new String[] {
+					String.join(",", ci.getTScore().toString(), ci.getMi().toString(), ci.getLogDice().toString()) };
+			strList.add(line);
+		}
+		this.appendCsv(strList, filePathStr);
 	}
 
 	private void elaborateMetadataFrequencyCsv(QueryResponse queryResponse, String filePathStr, boolean header)
@@ -114,6 +145,9 @@ public class ExportCsvService {
 			String filePathStr, boolean header) throws Exception {
 
 		switch (requestType) {
+		case COLLOCATION_REQUEST:
+			this.elaborateCollocationCsv(queryResponse, filePathStr, header);
+			break;
 		case METADATA_FREQUENCY_QUERY_REQUEST:
 			this.elaborateMetadataFrequencyCsv(queryResponse, filePathStr, header);
 			break;

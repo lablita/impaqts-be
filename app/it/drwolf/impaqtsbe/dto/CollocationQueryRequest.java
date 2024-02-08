@@ -10,7 +10,6 @@ public class CollocationQueryRequest {
 	private Integer minFreqRange;
 	private List<String> showFunc;
 	private String sortBy;
-	private Integer resultSize;
 
 	public String getAttribute() {
 		return this.attribute;
@@ -30,10 +29,6 @@ public class CollocationQueryRequest {
 
 	public Integer getRangeTo() {
 		return this.rangeTo;
-	}
-
-	public Integer getResultSize() {
-		return resultSize;
 	}
 
 	public List<String> getShowFunc() {
@@ -62,10 +57,6 @@ public class CollocationQueryRequest {
 
 	public void setRangeTo(Integer rangeTo) {
 		this.rangeTo = rangeTo;
-	}
-
-	public void setResultSize(Integer resultSize) {
-		this.resultSize = resultSize;
 	}
 
 	public void setShowFunc(List<String> showFunc) {

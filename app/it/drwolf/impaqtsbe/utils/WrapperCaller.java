@@ -172,11 +172,11 @@ public class WrapperCaller {
 		final String progressFilePathStr = tmpPathStr + "/" + this.progressFileCsv;
 
 		Integer resultSize;
+		queryRequest.setStart(0);
 		Integer end = queryRequest.getEnd();
 		QueryResponse queryResponse;
 		if (QueryRequest.RequestType.COLLOCATION_REQUEST.toString().equals(queryRequest.getQueryType())) {
-			resultSize = queryRequest.getCollocationQueryRequest().getResultSize();
-			queryRequest.setStart(0);
+			resultSize = csvMaxLength;
 			end = resultSize;
 			queryRequest.setEnd(resultSize);
 			queryResponse = this.executeNonQueryRequest(queryRequest);

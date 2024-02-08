@@ -37,8 +37,8 @@ public class ExportCsvService {
 	static final String LOG_DICE = "logDice";
 	static final String MI_LOG_F = "MI.log_f";
 
-	private static final Map<String, String> CAPITALI = Map.of("m", MI, "3", MI3, "l", LOG_LIKELIHOOD, "s", MIN_SENS,
-			"d", LOG_DICE, "p", MI_LOG_F);
+	private static final Map<String, String> COLL_FUNC = Map.of("t", T_SCORE, "m", MI, "3", MI3, "l", LOG_LIKELIHOOD,
+			"s", MIN_SENS, "d", LOG_DICE, "p", MI_LOG_F);
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
 		try (CSVWriter writer = new CSVWriter(new FileWriter(filePathStr, true))) {
@@ -46,19 +46,52 @@ public class ExportCsvService {
 		}
 	}
 
-	private void elaborateCollocationCsv(QueryResponse queryResponse, String filePathStr, boolean header)
-			throws Exception {
+	private void elaborateCollocationCsv(QueryResponse queryResponse, String filePathStr, boolean header,
+			QueryRequest queryRequest) throws Exception {
 		List<String[]> strList = new ArrayList<>();
 		if (header) {
-			String[] headerStrs = new String[] { "", ExportCsvService.COLLOCATION, ExportCsvService.REL,
-					String.format("%s: %d - %s: %d", ExportCsvService.ELEMENT, queryResponse.getCollocations().size(),
-							ExportCsvService.OVERALL_FREQ, 5) };
-			strList.add(headerStrs);
+			ArrayList<String> headerList = new ArrayList<>();
+			headerList.add(queryRequest.getCollocationQueryRequest().getAttribute().toLowerCase());
+			headerList.add(CONC_COUNT);
+			headerList.add(CAND_COUNT);
+			queryRequest.getCollocationQueryRequest().getShowFunc().forEach(f -> headerList.add(COLL_FUNC.get(f)));
+			String[] headerStr = new String[headerList.size()];
+			headerList.toArray(headerStr);
+			strList.add(headerStr);
 		}
 		for (CollocationItem ci : queryResponse.getCollocations()) {
-			String[] line = new String[] {
-					String.join(",", ci.getTScore().toString(), ci.getMi().toString(), ci.getLogDice().toString()) };
-			strList.add(line);
+			ArrayList<String> lineList = new ArrayList<>();
+			lineList.add(ci.getWord());
+			lineList.add(ci.getConcurrenceCount().toString());
+			lineList.add(ci.getCandidateCount().toString());
+			queryRequest.getCollocationQueryRequest().getShowFunc().forEach(f -> {
+				switch (f) {
+				case "t":
+					lineList.add(ci.getTScore().toString());
+					break;
+				case "m":
+					lineList.add(ci.getMi().toString());
+					break;
+				case "3":
+					lineList.add(ci.getMi3().toString());
+					break;
+				case "l":
+					lineList.add(ci.getLogLikelihood().toString());
+					break;
+				case "s":
+					lineList.add(ci.getMinSensitivity().toString());
+					break;
+				case "d":
+					lineList.add(ci.getLogDice().toString());
+					break;
+				case "p":
+					lineList.add(ci.getMiLogF().toString());
+					break;
+				}
+			});
+			String[] lineStr = new String[lineList.size()];
+			lineList.toArray(lineStr);
+			strList.add(lineStr);
 		}
 		this.appendCsv(strList, filePathStr);
 	}
@@ -142,11 +175,11 @@ public class ExportCsvService {
 	}
 
 	public void storageTmpFileCsvFromQueryResponse(QueryResponse queryResponse, QueryRequest.RequestType requestType,
-			String filePathStr, boolean header) throws Exception {
+			String filePathStr, boolean header, QueryRequest queryRequest) throws Exception {
 
 		switch (requestType) {
 		case COLLOCATION_REQUEST:
-			this.elaborateCollocationCsv(queryResponse, filePathStr, header);
+			this.elaborateCollocationCsv(queryResponse, filePathStr, header, queryRequest);
 			break;
 		case METADATA_FREQUENCY_QUERY_REQUEST:
 			this.elaborateMetadataFrequencyCsv(queryResponse, filePathStr, header);

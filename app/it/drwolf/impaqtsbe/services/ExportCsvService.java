@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ExportCsvService {
 	static final String FREQUENCY = "frequency";
@@ -41,8 +43,9 @@ public class ExportCsvService {
 	static final String LOG_DICE = "logDice";
 	static final String MI_LOG_F = "MI.log_f";
 
-	private static final Map<String, String> COLL_FUNC = Map.of("t", T_SCORE, "m", MI, "3", MI3, "l", LOG_LIKELIHOOD,
-			"s", MIN_SENS, "d", LOG_DICE, "p", MI_LOG_F);
+	private static final Map<String, String> COLL_FUNC = Stream.of(
+			new String[][] { { "t", T_SCORE }, { "m", MI }, { "3", MI3 }, { "l", LOG_LIKELIHOOD }, { "s", MIN_SENS },
+					{ "d", LOG_DICE }, { "p", MI_LOG_F } }).collect(Collectors.toMap(d -> d[0], d -> d[1]));
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
@@ -52,7 +55,7 @@ public class ExportCsvService {
 			writer.flush();
 		}
 		// check file existence
-		boolean fileExists = Files.exists(Path.of(filePathStr));
+		boolean fileExists = Files.exists(Paths.get(filePathStr));
 		this.logger.info("CSV file exists: {}", fileExists);
 	}
 

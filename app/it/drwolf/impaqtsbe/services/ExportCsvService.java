@@ -8,8 +8,12 @@ import it.drwolf.impaqtsbe.dto.QueryRequest;
 import it.drwolf.impaqtsbe.dto.QueryResponse;
 import it.drwolf.impaqtsbe.dto.WordListItem;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,11 +43,17 @@ public class ExportCsvService {
 
 	private static final Map<String, String> COLL_FUNC = Map.of("t", T_SCORE, "m", MI, "3", MI3, "l", LOG_LIKELIHOOD,
 			"s", MIN_SENS, "d", LOG_DICE, "p", MI_LOG_F);
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
+		this.logger.info("Export CSV path: {}", filePathStr);
 		try (CSVWriter writer = new CSVWriter(new FileWriter(filePathStr, true))) {
 			writer.writeAll(lines);
+			writer.flush();
 		}
+		// check file existence
+		boolean fileExists = Files.exists(Path.of(filePathStr));
+		this.logger.info("CSV file exists: {}", fileExists);
 	}
 
 	private void elaborateCollocationCsv(QueryResponse queryResponse, String filePathStr, boolean header,

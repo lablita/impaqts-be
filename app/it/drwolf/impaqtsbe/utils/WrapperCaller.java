@@ -170,25 +170,36 @@ public class WrapperCaller {
 		Files.createDirectories(Paths.get(tmpPathStr));
 		final String filePathStr = tmpPathStr + "/" + uuid + this.csvExt;
 		final String progressFilePathStr = tmpPathStr + "/" + this.progressFileCsv;
-		QueryResponse queryResponse = this.executeNonQueryRequest(queryRequest);
+
 		Integer resultSize;
-		if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString().equals(queryRequest.getQueryType())
-				|| QueryRequest.RequestType.MULTI_FREQUENCY_QUERY_REQUEST.toString()
-				.equals(queryRequest.getQueryType())) {
-			resultSize = queryResponse.getFrequency().getTotal();
-		} else if (QueryRequest.RequestType.WORD_LIST_REQUEST.toString().equals(queryRequest.getQueryType())) {
-			resultSize = queryResponse.getWordList().getTotalItems();
+		queryRequest.setStart(0);
+		Integer end = queryRequest.getEnd();
+		QueryResponse queryResponse;
+		if (QueryRequest.RequestType.COLLOCATION_REQUEST.toString().equals(queryRequest.getQueryType())) {
+			resultSize = csvMaxLength;
+			end = resultSize;
+			queryRequest.setEnd(resultSize);
+			queryResponse = this.executeNonQueryRequest(queryRequest);
 		} else {
-			resultSize = queryResponse.getCurrentSize();
-		}
-		if (!complete) {
-			//max 10000 lines
-			resultSize = resultSize <= csvMaxLength ? resultSize : csvMaxLength;
+			queryResponse = this.executeNonQueryRequest(queryRequest);
+			if (QueryRequest.RequestType.METADATA_FREQUENCY_QUERY_REQUEST.toString()
+					.equals(queryRequest.getQueryType()) || QueryRequest.RequestType.MULTI_FREQUENCY_QUERY_REQUEST.toString()
+					.equals(queryRequest.getQueryType())) {
+				resultSize = queryResponse.getFrequency().getTotal();
+			} else if (QueryRequest.RequestType.WORD_LIST_REQUEST.toString().equals(queryRequest.getQueryType())) {
+				resultSize = queryResponse.getWordList().getTotalItems();
+			} else {
+				resultSize = queryResponse.getCurrentSize();
+			}
+			if (!complete) {
+				//max 10000 lines
+				resultSize = resultSize <= csvMaxLength ? resultSize : csvMaxLength;
+			}
 		}
 		Integer pageSize = queryRequest.getEnd() - queryRequest.getStart();
 		Integer start;
-		Integer end = queryRequest.getEnd();
-		exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, true);
+
+		exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, true, queryRequest);
 		boolean completeWithoutErrors = true;
 		final File progressFile = new File(progressFilePathStr);
 		if (end >= resultSize) {
@@ -201,7 +212,8 @@ public class WrapperCaller {
 				queryRequest.setEnd(end);
 				queryResponse = this.executeNonQueryRequest(queryRequest);
 				try {
-					exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, false);
+					exportCsvService.storageTmpFileCsvFromQueryResponse(queryResponse, queryType, filePathStr, false,
+							queryRequest);
 				} catch (Exception e) {
 					completeWithoutErrors = false;
 					FileUtils.writeStringToFile(progressFile, "KO", StandardCharsets.UTF_8);

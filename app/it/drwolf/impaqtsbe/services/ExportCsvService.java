@@ -1,6 +1,7 @@
 package it.drwolf.impaqtsbe.services;
 
 import com.opencsv.CSVWriter;
+import it.drwolf.impaqtsbe.dto.CollocationItem;
 import it.drwolf.impaqtsbe.dto.FrequencyResultLine;
 import it.drwolf.impaqtsbe.dto.KWICLine;
 import it.drwolf.impaqtsbe.dto.QueryRequest;
@@ -12,6 +13,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ExportCsvService {
 	static final String FREQUENCY = "frequency";
@@ -21,15 +23,77 @@ public class ExportCsvService {
 	static final String WORD = "word";
 	static final String LEMMA = "lemma";
 	static final String TAG = "tag";
-
 	static final String LEFT = "Left";
 	static final String KWIC = "Kwic";
 	static final String RIGHT = "Right";
+	static final String COLLOCATION = "collocation";
+	static final String CONC_COUNT = "Concurrence count";
+	static final String CAND_COUNT = "Candidate count";
+	static final String T_SCORE = "T-score";
+	static final String MI = "MI";
+	static final String MI3 = "MI3";
+	static final String LOG_LIKELIHOOD = "log likelihood";
+	static final String MIN_SENS = "min. sensitivity";
+	static final String LOG_DICE = "logDice";
+	static final String MI_LOG_F = "MI.log_f";
+
+	private static final Map<String, String> COLL_FUNC = Map.of("t", T_SCORE, "m", MI, "3", MI3, "l", LOG_LIKELIHOOD,
+			"s", MIN_SENS, "d", LOG_DICE, "p", MI_LOG_F);
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
 		try (CSVWriter writer = new CSVWriter(new FileWriter(filePathStr, true))) {
 			writer.writeAll(lines);
 		}
+	}
+
+	private void elaborateCollocationCsv(QueryResponse queryResponse, String filePathStr, boolean header,
+			QueryRequest queryRequest) throws Exception {
+		List<String[]> strList = new ArrayList<>();
+		if (header) {
+			ArrayList<String> headerList = new ArrayList<>();
+			headerList.add(queryRequest.getCollocationQueryRequest().getAttribute().toLowerCase());
+			headerList.add(CONC_COUNT);
+			headerList.add(CAND_COUNT);
+			queryRequest.getCollocationQueryRequest().getShowFunc().forEach(f -> headerList.add(COLL_FUNC.get(f)));
+			String[] headerStr = new String[headerList.size()];
+			headerList.toArray(headerStr);
+			strList.add(headerStr);
+		}
+		for (CollocationItem ci : queryResponse.getCollocations()) {
+			ArrayList<String> lineList = new ArrayList<>();
+			lineList.add(ci.getWord());
+			lineList.add(ci.getConcurrenceCount().toString());
+			lineList.add(ci.getCandidateCount().toString());
+			queryRequest.getCollocationQueryRequest().getShowFunc().forEach(f -> {
+				switch (f) {
+				case "t":
+					lineList.add(ci.getTScore().toString());
+					break;
+				case "m":
+					lineList.add(ci.getMi().toString());
+					break;
+				case "3":
+					lineList.add(ci.getMi3().toString());
+					break;
+				case "l":
+					lineList.add(ci.getLogLikelihood().toString());
+					break;
+				case "s":
+					lineList.add(ci.getMinSensitivity().toString());
+					break;
+				case "d":
+					lineList.add(ci.getLogDice().toString());
+					break;
+				case "p":
+					lineList.add(ci.getMiLogF().toString());
+					break;
+				}
+			});
+			String[] lineStr = new String[lineList.size()];
+			lineList.toArray(lineStr);
+			strList.add(lineStr);
+		}
+		this.appendCsv(strList, filePathStr);
 	}
 
 	private void elaborateMetadataFrequencyCsv(QueryResponse queryResponse, String filePathStr, boolean header)
@@ -111,9 +175,12 @@ public class ExportCsvService {
 	}
 
 	public void storageTmpFileCsvFromQueryResponse(QueryResponse queryResponse, QueryRequest.RequestType requestType,
-			String filePathStr, boolean header) throws Exception {
+			String filePathStr, boolean header, QueryRequest queryRequest) throws Exception {
 
 		switch (requestType) {
+		case COLLOCATION_REQUEST:
+			this.elaborateCollocationCsv(queryResponse, filePathStr, header, queryRequest);
+			break;
 		case METADATA_FREQUENCY_QUERY_REQUEST:
 			this.elaborateMetadataFrequencyCsv(queryResponse, filePathStr, header);
 			break;

@@ -20,6 +20,7 @@ public class QueryRequest {
 	private FilterConcordanceQueryRequest filterConcordanceQueryRequest;
 	private String queryType;
 	private WordListRequest wordListRequest;
+	private ViewOptionRequest viewOptionRequest;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
@@ -79,6 +80,10 @@ public class QueryRequest {
 
 	public Integer getStart() {
 		return this.start;
+	}
+
+	public ViewOptionRequest getViewOptionRequest() {
+		return viewOptionRequest;
 	}
 
 	public WideContextRequest getWideContextRequest() {
@@ -152,6 +157,10 @@ public class QueryRequest {
 
 	public void setStart(Integer start) {
 		this.start = start;
+	}
+
+	public void setViewOptionRequest(ViewOptionRequest viewOptionRequest) {
+		this.viewOptionRequest = viewOptionRequest;
 	}
 
 	public void setWideContextRequest(WideContextRequest wideContextRequest) {

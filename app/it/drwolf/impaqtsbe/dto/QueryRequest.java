@@ -5,6 +5,7 @@ import it.drwolf.impaqtsbe.query.QueryPattern;
 public class QueryRequest {
 	private String id; // uuid
 	private String corpusMetadatum;
+	private Long referencePosition;
 	private Integer start = 0;
 	private Integer end = 0;
 	private String corpus;
@@ -72,6 +73,10 @@ public class QueryRequest {
 
 	public String getQueryType() {
 		return this.queryType;
+	}
+
+	public Long getReferencePosition() {
+		return referencePosition;
 	}
 
 	public SortQueryRequest getSortQueryRequest() {
@@ -149,6 +154,10 @@ public class QueryRequest {
 
 	public void setQueryType(String queryType) {
 		this.queryType = queryType;
+	}
+
+	public void setReferencePosition(Long referencePosition) {
+		this.referencePosition = referencePosition;
 	}
 
 	public void setSortQueryRequest(SortQueryRequest sortQueryRequest) {

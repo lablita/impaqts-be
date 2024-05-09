@@ -215,9 +215,9 @@ public class CorpusController extends Controller {
 		try {
 			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
 		} catch (IOException e) {
-			final String wideContextRetrievalErrorMessage = String.format("Error while retrieving context %s %d %d",
-					corpusName, pos);
-			return Results.internalServerError(wideContextRetrievalErrorMessage);
+			final String referencePoasitionRetrievalErrorMessage = String.format(
+					"Error while retrieving reference %s %d %d", corpusName, pos);
+			return Results.internalServerError(referencePoasitionRetrievalErrorMessage);
 		}
 		return Results.ok(Json.toJson(queryResponse));
 	}

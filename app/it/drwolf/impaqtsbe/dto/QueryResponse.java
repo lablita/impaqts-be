@@ -6,129 +6,139 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse {
-    private final List<DescResponse> descResponses = new ArrayList<>();
-    private final CorpusInfo corpusInfo = new CorpusInfo();
-    private Integer start = 0;
-    private Integer end = 0;
-    private String id; // uuid
-    private List<KWICLine> kwicLines = new ArrayList<>();
-    private List<CollocationItem> collocations = new ArrayList<>();
-    private FrequencyItem frequency = new FrequencyItem();
-    private Boolean inProgress = Boolean.TRUE;
-    private Integer currentSize;
-    private List<String> metadataValues = new ArrayList<>();
-    private WideContextResponse wideContextResponse = new WideContextResponse();
-    private ErrorResponse errorResponse;
-    private WordListResponse wordList = new WordListResponse();
-    public QueryResponse() {
-    }
+	private final List<DescResponse> descResponses = new ArrayList<>();
+	private final CorpusInfo corpusInfo = new CorpusInfo();
+	private Integer start = 0;
+	private Integer end = 0;
+	private String id; // uuid
+	private List<KWICLine> kwicLines = new ArrayList<>();
+	private List<CollocationItem> collocations = new ArrayList<>();
+	private FrequencyItem frequency = new FrequencyItem();
+	private Boolean inProgress = Boolean.TRUE;
+	private Integer currentSize;
+	private List<String> metadataValues = new ArrayList<>();
+	private WideContextResponse wideContextResponse = new WideContextResponse();
+	private ReferencePositionResponse referencePositionResponse = new ReferencePositionResponse();
+	private ErrorResponse errorResponse;
+	private WordListResponse wordList = new WordListResponse();
 
-    public QueryResponse(String id) {
-        this.id = id;
-    }
+	public QueryResponse() {
+	}
 
-    public WordListResponse getWordList() {
-        return wordList;
-    }
+	public QueryResponse(String id) {
+		this.id = id;
+	}
 
-    public void setWordList(WordListResponse wordList) {
-        this.wordList = wordList;
-    }
+	public List<CollocationItem> getCollocations() {
+		return this.collocations;
+	}
 
-    public List<CollocationItem> getCollocations() {
-        return this.collocations;
-    }
+	public CorpusInfo getCorpusInfo() {
+		return corpusInfo;
+	}
 
-    public void setCollocations(List<CollocationItem> collocations) {
-        this.collocations = collocations;
-    }
+	public Integer getCurrentSize() {
+		return this.currentSize;
+	}
 
-    public CorpusInfo getCorpusInfo() {
-        return corpusInfo;
-    }
+	public List<DescResponse> getDescResponses() {
+		return this.descResponses;
+	}
 
-    public Integer getCurrentSize() {
-        return this.currentSize;
-    }
+	public Integer getEnd() {
+		return end;
+	}
 
-    public void setCurrentSize(Integer currentSize) {
-        this.currentSize = currentSize;
-    }
+	public ErrorResponse getErrorResponse() {
+		return errorResponse;
+	}
 
-    public List<DescResponse> getDescResponses() {
-        return this.descResponses;
-    }
+	public FrequencyItem getFrequency() {
+		return frequency;
+	}
 
-    public Integer getEnd() {
-        return end;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setEnd(Integer end) {
-        this.end = end;
-    }
+	public Boolean getInProgress() {
+		return this.inProgress;
+	}
 
-    public ErrorResponse getErrorResponse() {
-        return errorResponse;
-    }
+	public List<KWICLine> getKwicLines() {
+		return this.kwicLines;
+	}
 
-    public void setErrorResponse(ErrorResponse errorResponse) {
-        this.errorResponse = errorResponse;
-    }
+	public List<String> getMetadataValues() {
+		return this.metadataValues;
+	}
 
-    public FrequencyItem getFrequency() {
-        return frequency;
-    }
+	public ReferencePositionResponse getReferencePositionResponse() {
+		return referencePositionResponse;
+	}
 
-    public void setFrequency(FrequencyItem frequency) {
-        this.frequency = frequency;
-    }
+	public Integer getStart() {
+		return start;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public WideContextResponse getWideContextResponse() {
+		return wideContextResponse;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public WordListResponse getWordList() {
+		return wordList;
+	}
 
-    public Boolean getInProgress() {
-        return this.inProgress;
-    }
+	public void setCollocations(List<CollocationItem> collocations) {
+		this.collocations = collocations;
+	}
 
-    public void setInProgress(Boolean inProgress) {
-        this.inProgress = inProgress;
-    }
+	public void setCurrentSize(Integer currentSize) {
+		this.currentSize = currentSize;
+	}
 
-    public List<KWICLine> getKwicLines() {
-        return this.kwicLines;
-    }
+	public void setEnd(Integer end) {
+		this.end = end;
+	}
 
-    public void setKwicLines(List<KWICLine> kwicLines) {
-        this.kwicLines = kwicLines;
-    }
+	public void setErrorResponse(ErrorResponse errorResponse) {
+		this.errorResponse = errorResponse;
+	}
 
-    public List<String> getMetadataValues() {
-        return this.metadataValues;
-    }
+	public void setFrequency(FrequencyItem frequency) {
+		this.frequency = frequency;
+	}
 
-    public void setMetadataValues(List<String> metadataValues) {
-        this.metadataValues = metadataValues;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public Integer getStart() {
-        return start;
-    }
+	public void setInProgress(Boolean inProgress) {
+		this.inProgress = inProgress;
+	}
 
-    public void setStart(Integer start) {
-        this.start = start;
-    }
+	public void setKwicLines(List<KWICLine> kwicLines) {
+		this.kwicLines = kwicLines;
+	}
 
-    public WideContextResponse getWideContextResponse() {
-        return wideContextResponse;
-    }
+	public void setMetadataValues(List<String> metadataValues) {
+		this.metadataValues = metadataValues;
+	}
 
-    public void setWideContextResponse(WideContextResponse wideContextResponse) {
-        this.wideContextResponse = wideContextResponse;
-    }
+	public void setReferencePositionResponse(ReferencePositionResponse referencePositionResponse) {
+		this.referencePositionResponse = referencePositionResponse;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public void setWideContextResponse(WideContextResponse wideContextResponse) {
+		this.wideContextResponse = wideContextResponse;
+	}
+
+	public void setWordList(WordListResponse wordList) {
+		this.wordList = wordList;
+	}
 
 }

@@ -201,6 +201,7 @@ public class ExportCsvService {
 			this.elaborateMultilevelFrequencyCsv(queryResponse, filePathStr, header);
 			break;
 		case TEXTUAL_QUERY_REQUEST:
+		case IMPLICIT_REQUEST:
 			this.elaborateTextualQueryRequestCsv(queryResponse, filePathStr, header);
 			break;
 		case WORD_LIST_REQUEST:

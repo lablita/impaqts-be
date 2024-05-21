@@ -16,11 +16,13 @@ public class QueryRequest {
 	private ContextConcordanceQueryRequest contextConcordanceQueryRequest;
 	private FrequencyQueryRequest frequencyQueryRequest;
 	private WideContextRequest wideContextRequest = new WideContextRequest();
+	private ReferencePositionRequest referencePositionRequest = new ReferencePositionRequest();
 	private ConcordanceFromCollocationParameters concordanceFromCollocationParameters;
 	private FilterConcordanceQueryRequest filterConcordanceQueryRequest;
 	private String queryType;
 	private WordListRequest wordListRequest;
 	private ViewOptionRequest viewOptionRequest;
+	private boolean impaqts;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
@@ -74,6 +76,10 @@ public class QueryRequest {
 		return this.queryType;
 	}
 
+	public ReferencePositionRequest getReferencePositionRequest() {
+		return referencePositionRequest;
+	}
+
 	public SortQueryRequest getSortQueryRequest() {
 		return this.sortQueryRequest;
 	}
@@ -92,6 +98,10 @@ public class QueryRequest {
 
 	public WordListRequest getWordListRequest() {
 		return this.wordListRequest;
+	}
+
+	public boolean isImpaqts() {
+		return impaqts;
 	}
 
 	public boolean isQueryInCql() {
@@ -139,6 +149,10 @@ public class QueryRequest {
 		this.id = id;
 	}
 
+	public void setImpaqts(boolean impaqts) {
+		this.impaqts = impaqts;
+	}
+
 	public void setQueryInCql(boolean queryInCql) {
 		this.queryInCql = queryInCql;
 	}
@@ -149,6 +163,10 @@ public class QueryRequest {
 
 	public void setQueryType(String queryType) {
 		this.queryType = queryType;
+	}
+
+	public void setReferencePositionRequest(ReferencePositionRequest referencePositionRequest) {
+		this.referencePositionRequest = referencePositionRequest;
 	}
 
 	public void setSortQueryRequest(SortQueryRequest sortQueryRequest) {
@@ -172,7 +190,7 @@ public class QueryRequest {
 	}
 
 	public enum RequestType {
-		VISUAL_QUERY_REQUEST, TEXTUAL_QUERY_REQUEST, CONTEXT_QUERY_REQUEST, COLLOCATION_REQUEST, SORT_REQUEST, MULTI_FREQUENCY_QUERY_REQUEST, METADATA_FREQUENCY_QUERY_REQUEST, PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST, PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST, WIDE_CONTEXT_QUERY_REQUEST, CORPUS_INFO, FILTER_CONCORDANCE_QUERY_REQUEST, WORD_LIST_REQUEST;
+		VISUAL_QUERY_REQUEST, TEXTUAL_QUERY_REQUEST, CONTEXT_QUERY_REQUEST, COLLOCATION_REQUEST, SORT_REQUEST, MULTI_FREQUENCY_QUERY_REQUEST, METADATA_FREQUENCY_QUERY_REQUEST, PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST, PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST, WIDE_CONTEXT_QUERY_REQUEST, CORPUS_INFO, FILTER_CONCORDANCE_QUERY_REQUEST, WORD_LIST_REQUEST, IMPLICIT_REQUEST;
 
 		public static boolean contain(String dir) {
 			try {

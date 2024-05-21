@@ -3,132 +3,153 @@ package it.drwolf.impaqtsbe.dto;
 import it.drwolf.impaqtsbe.dto.corpusinfo.CorpusInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QueryResponse {
-    private final List<DescResponse> descResponses = new ArrayList<>();
-    private final CorpusInfo corpusInfo = new CorpusInfo();
-    private Integer start = 0;
-    private Integer end = 0;
-    private String id; // uuid
-    private List<KWICLine> kwicLines = new ArrayList<>();
-    private List<CollocationItem> collocations = new ArrayList<>();
-    private FrequencyItem frequency = new FrequencyItem();
-    private Boolean inProgress = Boolean.TRUE;
-    private Integer currentSize;
-    private List<String> metadataValues = new ArrayList<>();
-    private WideContextResponse wideContextResponse = new WideContextResponse();
-    private ErrorResponse errorResponse;
-    private WordListResponse wordList = new WordListResponse();
-    public QueryResponse() {
-    }
+	private final List<DescResponse> descResponses = new ArrayList<>();
+	private final CorpusInfo corpusInfo = new CorpusInfo();
+	private Integer start = 0;
+	private Integer end = 0;
+	private String id; // uuid
+	private List<KWICLine> kwicLines = new ArrayList<>();
+	private List<CollocationItem> collocations = new ArrayList<>();
+	private FrequencyItem frequency = new FrequencyItem();
+	private Boolean inProgress = Boolean.TRUE;
+	private Integer currentSize;
+	private List<String> metadataValues = new ArrayList<>();
+	private WideContextResponse wideContextResponse = new WideContextResponse();
+	private ReferencePositionResponse referencePositionResponse = new ReferencePositionResponse();
+	private ErrorResponse errorResponse;
+	private WordListResponse wordList = new WordListResponse();
+	private Map<String, String> references = new HashMap<>();
 
-    public QueryResponse(String id) {
-        this.id = id;
-    }
+	public QueryResponse() {
+	}
 
-    public WordListResponse getWordList() {
-        return wordList;
-    }
+	public QueryResponse(String id) {
+		this.id = id;
+	}
 
-    public void setWordList(WordListResponse wordList) {
-        this.wordList = wordList;
-    }
+	public List<CollocationItem> getCollocations() {
+		return this.collocations;
+	}
 
-    public List<CollocationItem> getCollocations() {
-        return this.collocations;
-    }
+	public CorpusInfo getCorpusInfo() {
+		return corpusInfo;
+	}
 
-    public void setCollocations(List<CollocationItem> collocations) {
-        this.collocations = collocations;
-    }
+	public Integer getCurrentSize() {
+		return this.currentSize;
+	}
 
-    public CorpusInfo getCorpusInfo() {
-        return corpusInfo;
-    }
+	public List<DescResponse> getDescResponses() {
+		return this.descResponses;
+	}
 
-    public Integer getCurrentSize() {
-        return this.currentSize;
-    }
+	public Integer getEnd() {
+		return end;
+	}
 
-    public void setCurrentSize(Integer currentSize) {
-        this.currentSize = currentSize;
-    }
+	public ErrorResponse getErrorResponse() {
+		return errorResponse;
+	}
 
-    public List<DescResponse> getDescResponses() {
-        return this.descResponses;
-    }
+	public FrequencyItem getFrequency() {
+		return frequency;
+	}
 
-    public Integer getEnd() {
-        return end;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setEnd(Integer end) {
-        this.end = end;
-    }
+	public Boolean getInProgress() {
+		return this.inProgress;
+	}
 
-    public ErrorResponse getErrorResponse() {
-        return errorResponse;
-    }
+	public List<KWICLine> getKwicLines() {
+		return this.kwicLines;
+	}
 
-    public void setErrorResponse(ErrorResponse errorResponse) {
-        this.errorResponse = errorResponse;
-    }
+	public List<String> getMetadataValues() {
+		return this.metadataValues;
+	}
 
-    public FrequencyItem getFrequency() {
-        return frequency;
-    }
+	public ReferencePositionResponse getReferencePositionResponse() {
+		return referencePositionResponse;
+	}
 
-    public void setFrequency(FrequencyItem frequency) {
-        this.frequency = frequency;
-    }
+	public Map<String, String> getReferences() {
+		return references;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public Integer getStart() {
+		return start;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public WideContextResponse getWideContextResponse() {
+		return wideContextResponse;
+	}
 
-    public Boolean getInProgress() {
-        return this.inProgress;
-    }
+	public WordListResponse getWordList() {
+		return wordList;
+	}
 
-    public void setInProgress(Boolean inProgress) {
-        this.inProgress = inProgress;
-    }
+	public void setCollocations(List<CollocationItem> collocations) {
+		this.collocations = collocations;
+	}
 
-    public List<KWICLine> getKwicLines() {
-        return this.kwicLines;
-    }
+	public void setCurrentSize(Integer currentSize) {
+		this.currentSize = currentSize;
+	}
 
-    public void setKwicLines(List<KWICLine> kwicLines) {
-        this.kwicLines = kwicLines;
-    }
+	public void setEnd(Integer end) {
+		this.end = end;
+	}
 
-    public List<String> getMetadataValues() {
-        return this.metadataValues;
-    }
+	public void setErrorResponse(ErrorResponse errorResponse) {
+		this.errorResponse = errorResponse;
+	}
 
-    public void setMetadataValues(List<String> metadataValues) {
-        this.metadataValues = metadataValues;
-    }
+	public void setFrequency(FrequencyItem frequency) {
+		this.frequency = frequency;
+	}
 
-    public Integer getStart() {
-        return start;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setStart(Integer start) {
-        this.start = start;
-    }
+	public void setInProgress(Boolean inProgress) {
+		this.inProgress = inProgress;
+	}
 
-    public WideContextResponse getWideContextResponse() {
-        return wideContextResponse;
-    }
+	public void setKwicLines(List<KWICLine> kwicLines) {
+		this.kwicLines = kwicLines;
+	}
 
-    public void setWideContextResponse(WideContextResponse wideContextResponse) {
-        this.wideContextResponse = wideContextResponse;
-    }
+	public void setMetadataValues(List<String> metadataValues) {
+		this.metadataValues = metadataValues;
+	}
+
+	public void setReferencePositionResponse(ReferencePositionResponse referencePositionResponse) {
+		this.referencePositionResponse = referencePositionResponse;
+	}
+
+	public void setReferences(Map<String, String> references) {
+		this.references = references;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public void setWideContextResponse(WideContextResponse wideContextResponse) {
+		this.wideContextResponse = wideContextResponse;
+	}
+
+	public void setWordList(WordListResponse wordList) {
+		this.wordList = wordList;
+	}
 
 }

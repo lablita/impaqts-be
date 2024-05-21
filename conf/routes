@@ -22,6 +22,7 @@ GET     /widecontext/:corpusName/:pos/:hitlen           it.drwolf.impaqtsbe.cont
 GET     /info/:corpusName                               it.drwolf.impaqtsbe.controllers.CorpusController.getCorpusInfo(corpusName: String)
 POST    /corpus/frequencyLists/:corpusName              it.drwolf.impaqtsbe.controllers.CorpusController.extractBasicFrequencyLists(request: Request, corpusName: String)
 GET     /corpus/frequencyLists/:corpusName/:listType    it.drwolf.impaqtsbe.controllers.CorpusController.downloadList(corpusName: String, listType: String)
+GET     /reference-position/:corpusName/:pos            it.drwolf.impaqtsbe.controllers.CorpusController.getReferencePosition(corpusName: String, pos: Long)
 
 + nocsrf
 POST    /word-list                                      it.drwolf.impaqtsbe.controllers.CorpusController.getWordList(request: Request)

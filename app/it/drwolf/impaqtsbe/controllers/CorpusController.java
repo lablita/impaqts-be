@@ -201,6 +201,27 @@ public class CorpusController extends Controller {
 		return Results.ok(Json.toJson(queryResponse));
 	}
 
+	public Result getReferencePosition(String corpusName, Long pos) {
+		QueryRequest qr = new QueryRequest();
+		qr.getReferencePositionRequest().setCorpusName(corpusName);
+		qr.getReferencePositionRequest().setPos(pos);
+		qr.setCorpus(corpusName);
+		qr.setQueryType("REFERENCE_POSITION_QUERY_REQUEST");
+		QueryResponse queryResponse = null;
+		WrapperCaller wrapperCaller = new WrapperCaller(null, this.startup.getManateeRegistryPath(),
+				this.startup.getManateeLibPath(), this.startup.getJavaExecutable(), this.startup.getWrapperPath(),
+				this.startup.getDockerSwitch(), this.startup.getDockerManateeRegistry(),
+				this.startup.getDockerManateePath(), this.startup.getCacheDir());
+		try {
+			queryResponse = wrapperCaller.executeNonQueryRequest(qr);
+		} catch (IOException e) {
+			final String referencePoasitionRetrievalErrorMessage = String.format(
+					"Error while retrieving reference %s %d %d", corpusName, pos);
+			return Results.internalServerError(referencePoasitionRetrievalErrorMessage);
+		}
+		return Results.ok(Json.toJson(queryResponse));
+	}
+
 	public Result getWideContext(String corpusName, Long pos, Integer hitlen) {
 		QueryRequest qr = new QueryRequest();
 		qr.getWideContextRequest().setCorpusName(corpusName);

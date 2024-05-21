@@ -11,6 +11,7 @@ public class KWICLine {
 	private Long pos;
 	private String startTime;
 	private String videoUrl;
+	private Long docNumber;
 
 	public KWICLine(String ref, List<String> leftContext, String kwic, List<String> rightContext) {
 		this.ref = ref;
@@ -28,9 +29,13 @@ public class KWICLine {
 			return false;
 		}
 		KWICLine kwicLine = (KWICLine) o;
-		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext().equals(kwicLine.getLeftContext())
-				&& this.getKwic().equals(kwicLine.getKwic()) && this.getRightContext()
-				.equals(kwicLine.getRightContext());
+		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext()
+				.equals(kwicLine.getLeftContext()) && this.getKwic()
+				.equals(kwicLine.getKwic()) && this.getRightContext().equals(kwicLine.getRightContext());
+	}
+
+	public Long getDocNumber() {
+		return docNumber;
 	}
 
 	public String getKwic() {
@@ -64,6 +69,10 @@ public class KWICLine {
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.getRef(), this.getLeftContext(), this.getKwic(), this.getRightContext());
+	}
+
+	public void setDocNumber(Long docNumber) {
+		this.docNumber = docNumber;
 	}
 
 	public void setKwic(String kwic) {

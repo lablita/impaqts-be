@@ -22,6 +22,7 @@ public class QueryRequest {
 	private String queryType;
 	private WordListRequest wordListRequest;
 	private ViewOptionRequest viewOptionRequest;
+	private boolean impaqts;
 
 	public CollocationQueryRequest getCollocationQueryRequest() {
 		return this.collocationQueryRequest;
@@ -99,6 +100,10 @@ public class QueryRequest {
 		return this.wordListRequest;
 	}
 
+	public boolean isImpaqts() {
+		return impaqts;
+	}
+
 	public boolean isQueryInCql() {
 		return this.queryInCql;
 	}
@@ -142,6 +147,10 @@ public class QueryRequest {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public void setImpaqts(boolean impaqts) {
+		this.impaqts = impaqts;
 	}
 
 	public void setQueryInCql(boolean queryInCql) {

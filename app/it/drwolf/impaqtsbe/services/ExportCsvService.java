@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ExportCsvService {
+	public static final String DOC_ID = "doc.id";
 	static final String FREQUENCY = "frequency";
 	static final String REL = "rel[%]";
 	static final String ELEMENT = "Element";
@@ -42,10 +43,10 @@ public class ExportCsvService {
 	static final String MIN_SENS = "min. sensitivity";
 	static final String LOG_DICE = "logDice";
 	static final String MI_LOG_F = "MI.log_f";
-
 	private static final Map<String, String> COLL_FUNC = Stream.of(
 			new String[][] { { "t", T_SCORE }, { "m", MI }, { "3", MI3 }, { "l", LOG_LIKELIHOOD }, { "s", MIN_SENS },
 					{ "d", LOG_DICE }, { "p", MI_LOG_F } }).collect(Collectors.toMap(d -> d[0], d -> d[1]));
+	private static final String ID = "id";
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private void appendCsv(List<String[]> lines, String filePathStr) throws Exception {
@@ -161,11 +162,17 @@ public class ExportCsvService {
 			throws Exception {
 		List<String[]> strList = new ArrayList<>();
 		if (header) {
-			String[] headerStrs = new String[] { ExportCsvService.LEFT, ExportCsvService.KWIC, ExportCsvService.RIGHT };
+			String[] headerStrs = new String[] { ExportCsvService.ID, ExportCsvService.LEFT, ExportCsvService.KWIC,
+					ExportCsvService.RIGHT };
 			strList.add(headerStrs);
 		}
 		for (KWICLine kwic : queryResponse.getKwicLines()) {
-			String[] line = new String[] { kwic.getLeftContext().get(0), kwic.getKwic(),
+			Map<String, String> references = kwic.getReferences();
+			String id = String.valueOf(kwic.getDocNumber());
+			if (references != null && references.containsKey(DOC_ID)) {
+				id = references.get(DOC_ID);
+			}
+			String[] line = new String[] { id, kwic.getLeftContext().get(0), kwic.getKwic(),
 					kwic.getRightContext().get(0) };
 			strList.add(line);
 		}

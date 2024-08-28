@@ -1,9 +1,12 @@
 package it.drwolf.impaqtsbe.dto;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class KWICLine {
+	private Map<String, String> references = new HashMap<>();
 	private String ref;
 	private List<String> leftContext;
 	private String kwic;
@@ -29,9 +32,9 @@ public class KWICLine {
 			return false;
 		}
 		KWICLine kwicLine = (KWICLine) o;
-		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext()
-				.equals(kwicLine.getLeftContext()) && this.getKwic()
-				.equals(kwicLine.getKwic()) && this.getRightContext().equals(kwicLine.getRightContext());
+		return this.getRef().equals(kwicLine.getRef()) && this.getLeftContext().equals(kwicLine.getLeftContext())
+				&& this.getKwic().equals(kwicLine.getKwic()) && this.getRightContext()
+				.equals(kwicLine.getRightContext());
 	}
 
 	public Long getDocNumber() {
@@ -52,6 +55,10 @@ public class KWICLine {
 
 	public String getRef() {
 		return this.ref;
+	}
+
+	public Map<String, String> getReferences() {
+		return references;
 	}
 
 	public List<String> getRightContext() {
@@ -89,6 +96,10 @@ public class KWICLine {
 
 	public void setRef(String ref) {
 		this.ref = ref;
+	}
+
+	public void setReferences(Map<String, String> references) {
+		this.references = references;
 	}
 
 	public void setRightContext(List<String> rightContext) {

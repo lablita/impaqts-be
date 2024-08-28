@@ -3,9 +3,7 @@ package it.drwolf.impaqtsbe.dto;
 import it.drwolf.impaqtsbe.dto.corpusinfo.CorpusInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class QueryResponse {
 	private final List<DescResponse> descResponses = new ArrayList<>();
@@ -23,7 +21,6 @@ public class QueryResponse {
 	private ReferencePositionResponse referencePositionResponse = new ReferencePositionResponse();
 	private ErrorResponse errorResponse;
 	private WordListResponse wordList = new WordListResponse();
-	private Map<String, String> references = new HashMap<>();
 
 	public QueryResponse() {
 	}
@@ -80,10 +77,6 @@ public class QueryResponse {
 		return referencePositionResponse;
 	}
 
-	public Map<String, String> getReferences() {
-		return references;
-	}
-
 	public Integer getStart() {
 		return start;
 	}
@@ -134,10 +127,6 @@ public class QueryResponse {
 
 	public void setReferencePositionResponse(ReferencePositionResponse referencePositionResponse) {
 		this.referencePositionResponse = referencePositionResponse;
-	}
-
-	public void setReferences(Map<String, String> references) {
-		this.references = references;
 	}
 
 	public void setStart(Integer start) {

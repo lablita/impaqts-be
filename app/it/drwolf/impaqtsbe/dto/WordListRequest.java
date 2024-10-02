@@ -1,242 +1,260 @@
+/*
+ * Copyright (C) 2024
+ * EMMACorpus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.drwolf.impaqtsbe.dto;
 
 public class WordListRequest {
-    private String subCorpus;
-    private String searchAttribute;
-    private boolean useNGrams;
-    private int nGramFrom;
-    private int nGramTo;
-    private boolean hideSubNGram;
-    private String regexp;
-    private int minFreq;
-    private int maxFreq;
-    private String whiteList;
-    private String blackList;
-    private boolean nonWords;
-    private FigureType freqFigure;
-    private OutputType outputType;
-    private String kwRefCorpus;
-    private String kwRefSubCorpus;
-    private float commonWords;
-    private ChangeOutputAttrType changeOutFirst;
-    private ChangeOutputAttrType changeOutSecond;
-    private ChangeOutputAttrType changeOutThird;
-    private String sortField;
-    private String sortDir;
+	private String subCorpus;
+	private String searchAttribute;
+	private boolean useNGrams;
+	private int nGramFrom;
+	private int nGramTo;
+	private boolean hideSubNGram;
+	private String regexp;
+	private int minFreq;
+	private int maxFreq;
+	private String whiteList;
+	private String blackList;
+	private boolean nonWords;
+	private FigureType freqFigure;
+	private OutputType outputType;
+	private String kwRefCorpus;
+	private String kwRefSubCorpus;
+	private float commonWords;
+	private ChangeOutputAttrType changeOutFirst;
+	private ChangeOutputAttrType changeOutSecond;
+	private ChangeOutputAttrType changeOutThird;
+	private String sortField;
+	private String sortDir;
 
-    public String getSortField() {
-        return sortField;
-    }
+	public String getBlackList() {
+		return this.blackList;
+	}
 
-    public void setSortField(String sortField) {
-        this.sortField = sortField;
-    }
+	public ChangeOutputAttrType getChangeOutFirst() {
+		return this.changeOutFirst;
+	}
 
-    public String getSortDir() {
-        return sortDir;
-    }
+	public ChangeOutputAttrType getChangeOutSecond() {
+		return this.changeOutSecond;
+	}
 
-    public void setSortDir(String sortDir) {
-        this.sortDir = sortDir;
-    }
+	public ChangeOutputAttrType getChangeOutThird() {
+		return this.changeOutThird;
+	}
 
-    public String getBlackList() {
-        return this.blackList;
-    }
+	public float getCommonWords() {
+		return this.commonWords;
+	}
 
-    public void setBlackList(String blackList) {
-        this.blackList = blackList;
-    }
+	public FigureType getFreqFigure() {
+		return this.freqFigure;
+	}
 
-    public ChangeOutputAttrType getChangeOutFirst() {
-        return this.changeOutFirst;
-    }
+	public String getKwRefCorpus() {
+		return this.kwRefCorpus;
+	}
 
-    public void setChangeOutFirst(ChangeOutputAttrType changeOutFirst) {
-        this.changeOutFirst = changeOutFirst;
-    }
+	public String getKwRefSubCorpus() {
+		return this.kwRefSubCorpus;
+	}
 
-    public ChangeOutputAttrType getChangeOutSecond() {
-        return this.changeOutSecond;
-    }
+	public int getMaxFreq() {
+		return this.maxFreq;
+	}
 
-    public void setChangeOutSecond(ChangeOutputAttrType changeOutSecond) {
-        this.changeOutSecond = changeOutSecond;
-    }
+	public int getMinFreq() {
+		return this.minFreq;
+	}
 
-    public ChangeOutputAttrType getChangeOutThird() {
-        return this.changeOutThird;
-    }
+	public OutputType getOutputType() {
+		return this.outputType;
+	}
 
-    public void setChangeOutThird(ChangeOutputAttrType changeOutThird) {
-        this.changeOutThird = changeOutThird;
-    }
+	public String getRegexp() {
+		return this.regexp;
+	}
 
-    public float getCommonWords() {
-        return this.commonWords;
-    }
+	public String getSearchAttribute() {
+		return this.searchAttribute;
+	}
 
-    public void setCommonWords(float commonWords) {
-        this.commonWords = commonWords;
-    }
+	public String getSortDir() {
+		return sortDir;
+	}
 
-    public FigureType getFreqFigure() {
-        return this.freqFigure;
-    }
+	public String getSortField() {
+		return sortField;
+	}
 
-    public void setFreqFigure(FigureType freqFigure) {
-        this.freqFigure = freqFigure;
-    }
+	public String getSubCorpus() {
+		return this.subCorpus;
+	}
 
-    public String getKwRefCorpus() {
-        return this.kwRefCorpus;
-    }
+	public String getWhiteList() {
+		return this.whiteList;
+	}
 
-    public void setKwRefCorpus(String kwRefCorpus) {
-        this.kwRefCorpus = kwRefCorpus;
-    }
+	public int getnGramFrom() {
+		return this.nGramFrom;
+	}
 
-    public String getKwRefSubCorpus() {
-        return this.kwRefSubCorpus;
-    }
+	public int getnGramTo() {
+		return this.nGramTo;
+	}
 
-    public void setKwRefSubCorpus(String kwRefSubCorpus) {
-        this.kwRefSubCorpus = kwRefSubCorpus;
-    }
+	public boolean isHideSubNGram() {
+		return this.hideSubNGram;
+	}
 
-    public int getMaxFreq() {
-        return this.maxFreq;
-    }
+	public boolean isNonWords() {
+		return this.nonWords;
+	}
 
-    public void setMaxFreq(int maxFreq) {
-        this.maxFreq = maxFreq;
-    }
+	public boolean isUseNGrams() {
+		return this.useNGrams;
+	}
 
-    public int getMinFreq() {
-        return this.minFreq;
-    }
+	public void setBlackList(String blackList) {
+		this.blackList = blackList;
+	}
 
-    public void setMinFreq(int minFreq) {
-        this.minFreq = minFreq;
-    }
+	public void setChangeOutFirst(ChangeOutputAttrType changeOutFirst) {
+		this.changeOutFirst = changeOutFirst;
+	}
 
-    public OutputType getOutputType() {
-        return this.outputType;
-    }
+	public void setChangeOutSecond(ChangeOutputAttrType changeOutSecond) {
+		this.changeOutSecond = changeOutSecond;
+	}
 
-    public void setOutputType(OutputType outputType) {
-        this.outputType = outputType;
-    }
+	public void setChangeOutThird(ChangeOutputAttrType changeOutThird) {
+		this.changeOutThird = changeOutThird;
+	}
 
-    public String getRegexp() {
-        return this.regexp;
-    }
+	public void setCommonWords(float commonWords) {
+		this.commonWords = commonWords;
+	}
 
-    public void setRegexp(String regexp) {
-        this.regexp = regexp;
-    }
+	public void setFreqFigure(FigureType freqFigure) {
+		this.freqFigure = freqFigure;
+	}
 
-    public String getSearchAttribute() {
-        return this.searchAttribute;
-    }
+	public void setHideSubNGram(boolean hideSubNGram) {
+		this.hideSubNGram = hideSubNGram;
+	}
 
-    public void setSearchAttribute(String searchAttribute) {
-        this.searchAttribute = searchAttribute;
-    }
+	public void setKwRefCorpus(String kwRefCorpus) {
+		this.kwRefCorpus = kwRefCorpus;
+	}
 
-    public String getSubCorpus() {
-        return this.subCorpus;
-    }
+	public void setKwRefSubCorpus(String kwRefSubCorpus) {
+		this.kwRefSubCorpus = kwRefSubCorpus;
+	}
 
-    public void setSubCorpus(String subCorpus) {
-        this.subCorpus = subCorpus;
-    }
+	public void setMaxFreq(int maxFreq) {
+		this.maxFreq = maxFreq;
+	}
 
-    public String getWhiteList() {
-        return this.whiteList;
-    }
+	public void setMinFreq(int minFreq) {
+		this.minFreq = minFreq;
+	}
 
-    public void setWhiteList(String whiteList) {
-        this.whiteList = whiteList;
-    }
+	public void setNonWords(boolean nonWords) {
+		this.nonWords = nonWords;
+	}
 
-    public int getnGramFrom() {
-        return this.nGramFrom;
-    }
+	public void setOutputType(OutputType outputType) {
+		this.outputType = outputType;
+	}
 
-    public void setnGramFrom(int nGramFrom) {
-        this.nGramFrom = nGramFrom;
-    }
+	public void setRegexp(String regexp) {
+		this.regexp = regexp;
+	}
 
-    public int getnGramTo() {
-        return this.nGramTo;
-    }
+	public void setSearchAttribute(String searchAttribute) {
+		this.searchAttribute = searchAttribute;
+	}
 
-    public void setnGramTo(int nGramTo) {
-        this.nGramTo = nGramTo;
-    }
+	public void setSortDir(String sortDir) {
+		this.sortDir = sortDir;
+	}
 
-    public boolean isHideSubNGram() {
-        return this.hideSubNGram;
-    }
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
 
-    public void setHideSubNGram(boolean hideSubNGram) {
-        this.hideSubNGram = hideSubNGram;
-    }
+	public void setSubCorpus(String subCorpus) {
+		this.subCorpus = subCorpus;
+	}
 
-    public boolean isNonWords() {
-        return this.nonWords;
-    }
+	public void setUseNGrams(boolean useNGrams) {
+		this.useNGrams = useNGrams;
+	}
 
-    public void setNonWords(boolean nonWords) {
-        this.nonWords = nonWords;
-    }
+	public void setWhiteList(String whiteList) {
+		this.whiteList = whiteList;
+	}
 
-    public boolean isUseNGrams() {
-        return this.useNGrams;
-    }
+	public void setnGramFrom(int nGramFrom) {
+		this.nGramFrom = nGramFrom;
+	}
 
-    public void setUseNGrams(boolean useNGrams) {
-        this.useNGrams = useNGrams;
-    }
+	public void setnGramTo(int nGramTo) {
+		this.nGramTo = nGramTo;
+	}
 
-    public enum FigureType {
-        HIT, DOC, ARF;
+	public enum FigureType {
+		HIT, DOC, ARF;
 
-        public static boolean contain(String txt) {
-            try {
-                WordListRequest.FigureType.valueOf(txt);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-    }
+		public static boolean contain(String txt) {
+			try {
+				WordListRequest.FigureType.valueOf(txt);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
 
-    public enum OutputType {
-        SIMPLE, KEYWORDS, CHANGE;
+	public enum OutputType {
+		SIMPLE, KEYWORDS, CHANGE;
 
-        public static boolean contain(String txt) {
-            try {
-                WordListRequest.OutputType.valueOf(txt);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-    }
+		public static boolean contain(String txt) {
+			try {
+				WordListRequest.OutputType.valueOf(txt);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
 
-    public enum ChangeOutputAttrType {
-        WORD, TAG, LEMMA;
+	public enum ChangeOutputAttrType {
+		WORD, TAG, LEMMA;
 
-        public static boolean contain(String txt) {
-            try {
-                WordListRequest.ChangeOutputAttrType.valueOf(txt);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-    }
+		public static boolean contain(String txt) {
+			try {
+				WordListRequest.ChangeOutputAttrType.valueOf(txt);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
 
 }
